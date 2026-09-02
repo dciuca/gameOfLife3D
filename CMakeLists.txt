@@ -28,5 +28,6 @@ add_executable(${PROJECT_NAME} ${SRC_FILES} ${INC_FILES})
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
 
 target_include_directories(${PROJECT_NAME} PRIVATE 
-    include/core 
+    include/core
+    include/utils
 )

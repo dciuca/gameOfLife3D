@@ -1,0 +1,20 @@
+#pragma once
+
+#include <cstddef>
+
+struct RaylibConfig
+{
+    static constexpr int TARGET_FPS = 60;
+    static constexpr int SCREEN_WIDTH = 800;
+    static constexpr int SCREEN_HEIGHT = 600;
+};
+
+struct GameConfig
+{
+    static constexpr size_t GRID_WIDTH = 10;
+    static constexpr size_t GRID_HEIGHT = 10;
+    static constexpr size_t GRID_DEPTH = 10;
+
+    static constexpr float GENERATION_INTERVAL = 0.2f;
+    static constexpr float INITIAL_DENSITY = 0.3f;
+};
