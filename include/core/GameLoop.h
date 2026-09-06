@@ -11,14 +11,14 @@ public:
     ~GameLoop() = default;
 
     void Run();
+    void setSpeedMultiplier(float multiplier) { m_speedMultiplier = multiplier; }
 
-    /// It swaps the current and the next grid pointers
-    void swapBuffers()
-    {
-        m_currentGrid.swap(m_nextGrid);
-    }
+private:
+    void swapBuffers() { m_currentGrid.swap(m_nextGrid); }
+    void computeNextGeneration();
 
 private:
     std::unique_ptr<Grid> m_currentGrid;
     std::unique_ptr<Grid> m_nextGrid;
+    float m_speedMultiplier;
 };

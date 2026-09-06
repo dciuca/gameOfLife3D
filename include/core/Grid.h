@@ -17,6 +17,8 @@
 class Grid
 {
 public:
+    static constexpr uint8_t GUARD_CELL = 1;
+
     Grid(size_t width, size_t height, size_t depth)
         : m_width(width),
           m_height(height),
@@ -28,6 +30,7 @@ public:
     }
     ~Grid() = default;
 
+    // Get
     size_t getWidth() const { return m_width; }
     size_t getHeight() const { return m_height; }
     size_t getDepth() const { return m_depth; }
@@ -36,8 +39,11 @@ public:
     {
         return m_grid[(z * m_height + y) * m_width + x];
     }
-    const std::vector<uint8_t> &getGridData() const { return m_grid; };
+    std::vector<uint8_t> &getGridData() { return m_grid; };
     const std::array<int, 26> &getOffsets() const { return m_offset; }
+
+    // Set
+    void resetGrid() { std::fill(m_grid.begin(), m_grid.end(), 0); }
 
 private:
     static std::array<int, 26> preComputeCellsOffset(size_t w, size_t h);
