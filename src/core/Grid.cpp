@@ -1,9 +1,14 @@
 #include "Grid.h"
 
-std::array<int32_t, 26> Grid::preComputeCellsOffset(size_t w, size_t h)
+std::array<int, 26> Grid::preComputeCellsOffset(size_t w, size_t h)
 {
     int idx = 0;
-    std::array<int32_t, 26> offset{};
+    std::array<int, 26> offset{};
+
+    int ww = static_cast<int>(w);
+    int hh = static_cast<int>(h);
+
+    printf(">>> ww=%d, hh=%d\n", ww, hh);
 
     for (int dz = -1; dz <= 1; dz++)
     {
@@ -15,7 +20,9 @@ std::array<int32_t, 26> Grid::preComputeCellsOffset(size_t w, size_t h)
                     continue;
                 else
                 {
-                    offset[idx++] = dx + dy * w + dz * w * h;
+                    offset[idx] = dx + dy * ww + dz * ww * hh;
+                    printf(">>> (%d,%d,%d) -> %d\n", dx, dy, dz, offset[idx]);
+                    idx++;
                 }
             }
         }

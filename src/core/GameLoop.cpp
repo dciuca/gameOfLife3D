@@ -1,4 +1,5 @@
 #include "GameLoop.h"
+#include "Config.h"
 #include "raylib.h"
 #include "Utils.h"
 
@@ -18,17 +19,17 @@ void GameLoop::Run()
     while (!WindowShouldClose())
     {
         // DEBUG ----------------
-        timer.reset();
+        // timer.reset();
         // ----------------------
 
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        DrawText(TextFormat("current grid tot cells: %zu", m_currentGrid->getTotalCells()), 10, GetScreenHeight() / 2, 30, BLACK);
+
         EndDrawing();
 
         // DEBUG ----------------
-        timer.stop();
-        Utils::log("Loop: " + std::to_string(timer.elapsedMilliseconds()) + " us", Utils::LogLevel::DEBUG);
+        // timer.stop();
+        // Utils::log("Loop: " + std::to_string(timer.elapsedMilliseconds()) + " us", Utils::LogLevel::DEBUG);
         // ----------------------
     }
     CloseWindow();
