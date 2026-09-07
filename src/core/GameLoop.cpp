@@ -10,7 +10,7 @@ GameLoop::GameLoop()
       m_nextGrid(std::make_unique<Grid>(GameConfig::GRID_WIDTH, GameConfig::GRID_HEIGHT, GameConfig::GRID_DEPTH)),
       m_speedMultiplier(1.0f)
 {
-    m_renderer = std::make_unique<Renderer>();
+    m_renderer = std::make_unique<Renderer>(*m_currentGrid);
 }
 
 void GameLoop::Run()
@@ -106,7 +106,7 @@ void GameLoop::Run()
         // Render
         m_renderer->updateCamera();
         m_renderer->beginFrame();
-        m_renderer->renderGrid(*m_currentGrid);
+        m_renderer->renderGrid();
         m_renderer->endFrame();
     }
     CloseWindow();

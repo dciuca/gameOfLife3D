@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
-Renderer::Renderer()
+Renderer::Renderer(const Grid &grid)
+    : m_grid(grid)
 {
     initCamera();
 }
@@ -17,18 +18,18 @@ void Renderer::endFrame()
     EndDrawing();
 }
 
-void Renderer::renderGrid(const Grid &grid)
+void Renderer::renderGrid()
 {
     BeginMode3D(m_camera);
 
-    const auto &data = grid.getGridDataReadOnly();
+    const auto &data = m_grid.getGridDataReadOnly();
 
-    const size_t logicWidth = grid.getWidth() - Grid::GUARD_CELL;
-    const size_t logicHeight = grid.getHeight() - Grid::GUARD_CELL;
-    const size_t logicDepth = grid.getDepth() - Grid::GUARD_CELL;
+    const size_t logicWidth = m_grid.getWidth() - Grid::GUARD_CELL;
+    const size_t logicHeight = m_grid.getHeight() - Grid::GUARD_CELL;
+    const size_t logicDepth = m_grid.getDepth() - Grid::GUARD_CELL;
 
-    const size_t physWidth = grid.getWidth();
-    const size_t physHeight = grid.getHeight();
+    const size_t physWidth = m_grid.getWidth();
+    const size_t physHeight = m_grid.getHeight();
     const size_t physWH = physWidth * physHeight;
 
     // Offset per centrare la griglia nell'origine (0,0,0)
@@ -84,9 +85,27 @@ void Renderer::updateCamera()
 // private
 void Renderer::initCamera()
 {
-    m_camera.position = {0.0f, 10.0f, 10.0f}; // Camera position
-    m_camera.target = {0.0f, 0.0f, 0.0f};     // Camera looking at point
-    m_camera.up = {0.0f, 1.0f, 0.0f};         // Camera up vector (rotation towards target)
-    m_camera.fovy = 45.0f;                    // Camera field-of-view Y
-    m_camera.projection = CAMERA_PERSPECTIVE; // Camera mode type
+    // Grid diagonal
+    const float logicWidth = static_cast<float>(m_grid.getWidth());
+    const float logicHeight = static_cast<float>(m_grid.getHeight());
+    const float logicDepth = static_cast<float>(m_grid.getDepth());
+
+    const float diagonal = sqrtf(logicWidth * logicWidth +
+                                 logicHeight * logicHeight +
+                                 logicDepth * logicDepth);
+
+    // safe camera margin from grid border
+    float cameraDistance = diagonal * 1.2f;
+
+    // Camera in top-right corner
+    m_camera.position = {
+        cameraDistance * 0.6f, // X
+        cameraDistance * 0.8f, // Y
+        cameraDistance * 0.6f  // Z
+    };
+
+    m_camera.target = {0.0f, 0.0f, 0.0f};
+    m_camera.up = {0.0f, 1.0f, 0.0f};
+    m_camera.fovy = 45.0f;
+    m_camera.projection = CAMERA_PERSPECTIVE;
 }

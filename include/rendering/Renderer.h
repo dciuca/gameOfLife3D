@@ -7,14 +7,14 @@
 class Renderer
 {
 public:
-    Renderer();
+    Renderer(const Grid &grid);
     ~Renderer() = default;
 
     // void setup(int screenWidth, int screenHeight);
     void beginFrame();
     void endFrame();
 
-    void renderGrid(const Grid &grid);
+    void renderGrid();
 
     void updateCamera();
     // void resetCamera();
@@ -23,6 +23,7 @@ public:
 
 private:
     Camera3D m_camera;
+    const Grid &m_grid;
     bool m_isDragging = false;
     float m_cellSize = 0.9f;
 
