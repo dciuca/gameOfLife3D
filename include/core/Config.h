@@ -11,9 +11,9 @@ struct RaylibConfig
 
 struct GameConfig
 {
-    static constexpr size_t GRID_WIDTH = 10;
-    static constexpr size_t GRID_HEIGHT = 10;
-    static constexpr size_t GRID_DEPTH = 10;
+    static constexpr size_t GRID_WIDTH = 100;
+    static constexpr size_t GRID_HEIGHT = 100;
+    static constexpr size_t GRID_DEPTH = 100;
 
     static constexpr float GENERATION_INTERVAL = 1.0f; // 1 generation/s
 };

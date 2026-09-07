@@ -31,3 +31,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     include/core
     include/utils
 )
+
+# --- TESTS ---
+option(BUILD_TESTS "Build tests" ON)
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
