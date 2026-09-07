@@ -79,7 +79,7 @@ void Renderer::drawCell(float x, float y, float z, bool alive)
 
 void Renderer::updateCamera()
 {
-    UpdateCamera(&m_camera, CAMERA_ORBITAL);
+    UpdateCamera(&m_camera, CAMERA_THIRD_PERSON);
 }
 
 // private

@@ -4,6 +4,7 @@
 #include "Config.h"
 #include "Grid.h"
 #include "Renderer.h"
+#include "PatternLibrary.h"
 
 class GameLoop
 {
@@ -17,10 +18,12 @@ public:
 private:
     void swapBuffers() { m_currentGrid.swap(m_nextGrid); }
     void computeNextGeneration();
+    void initPattern(PatternLibrary::Pattern pattern);
 
 private:
     std::unique_ptr<Grid> m_currentGrid;
     std::unique_ptr<Grid> m_nextGrid;
     std::unique_ptr<Renderer> m_renderer;
+    PatternLibrary::Pattern m_initPattern;
     float m_speedMultiplier;
 };
