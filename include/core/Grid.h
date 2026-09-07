@@ -39,11 +39,13 @@ public:
     {
         return m_grid[(z * m_height + y) * m_width + x];
     }
-    std::vector<uint8_t> &getGridData() { return m_grid; };
     const std::array<int, 26> &getOffsets() const { return m_offset; }
+    const std::vector<uint8_t> &getGridDataReadOnly() const { return m_grid; }
 
     // Set
+    std::vector<uint8_t> &getGridData() { return m_grid; };
     void resetGrid() { std::fill(m_grid.begin(), m_grid.end(), 0); }
+    void setCellByPosition(size_t x, size_t y, size_t z, uint8_t value);
 
 private:
     static std::array<int, 26> preComputeCellsOffset(size_t w, size_t h);

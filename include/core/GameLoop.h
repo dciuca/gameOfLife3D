@@ -1,8 +1,9 @@
 #pragma once
 
 #include <memory>
-#include "Grid.h"
 #include "Config.h"
+#include "Grid.h"
+#include "Renderer.h"
 
 class GameLoop
 {
@@ -20,5 +21,6 @@ private:
 private:
     std::unique_ptr<Grid> m_currentGrid;
     std::unique_ptr<Grid> m_nextGrid;
+    std::unique_ptr<Renderer> m_renderer;
     float m_speedMultiplier;
 };

@@ -30,3 +30,9 @@ std::array<int, 26> Grid::preComputeCellsOffset(size_t w, size_t h)
 
     return offset;
 }
+
+void Grid::setCellByPosition(size_t x, size_t y, size_t z, uint8_t value)
+{
+    size_t idx = x + y * m_width + z * m_width * m_height;
+    m_grid[idx] = value;
+}
