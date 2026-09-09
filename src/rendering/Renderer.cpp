@@ -74,8 +74,9 @@ void Renderer::renderGrid()
 
 void Renderer::updateCamera()
 {
-    UpdateCamera(&m_camera, CAMERA_THIRD_PERSON);
-    // UpdateCamera(&m_camera, CAMERA_ORBITAL);
+    // UpdateCamera(&m_camera, CAMERA_FREE);
+    // UpdateCamera(&m_camera, CAMERA_THIRD_PERSON);
+    UpdateCamera(&m_camera, CAMERA_ORBITAL);
 }
 
 // private
@@ -97,9 +98,9 @@ void Renderer::initInstancedShader()
     m_instancedMaterial.shader = m_instancingShader;
     m_instancedMaterial.maps[MATERIAL_MAP_DIFFUSE].color = BLUE;
 
-    // 6. (Opzionale) Puoi anche impostare qui la posizione della luce
+    // Light Position
     int lightLoc = GetShaderLocation(m_instancingShader, "lightPos");
-    Vector3 lightPosition = {10.0f, 15.0f, 10.0f};
+    Vector3 lightPosition = {20.0f, 40.0f, 15.0f};
     SetShaderValue(m_instancingShader, lightLoc, &lightPosition, SHADER_UNIFORM_VEC3);
 }
 

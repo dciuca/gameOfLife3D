@@ -10,7 +10,7 @@ GameLoop::GameLoop()
       m_nextGrid(std::make_unique<Grid>(GameConfig::GRID_WIDTH, GameConfig::GRID_HEIGHT, GameConfig::GRID_DEPTH)),
       m_speedMultiplier(1.0f)
 {
-    initPattern(PatternLibrary::Pattern::CHAOS_SPARSE);
+    initPattern(PatternLibrary::Pattern::CHAOS);
     m_renderer = std::make_unique<Renderer>(*m_currentGrid);
 }
 
