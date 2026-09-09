@@ -8,25 +8,26 @@ class Renderer
 {
 public:
     Renderer(const Grid &grid);
-    ~Renderer() = default;
+    ~Renderer();
 
-    // void setup(int screenWidth, int screenHeight);
     void beginFrame();
     void endFrame();
-
     void renderGrid();
-
     void updateCamera();
-    // void resetCamera();
 
-    Camera3D &getCamera() { return m_camera; }
+private:
+    void initCamera();
+    void initMesh();
+    void initInstancedShader();
+    void collectCellTransforms();
 
 private:
     Camera3D m_camera;
     const Grid &m_grid;
-    bool m_isDragging = false;
     float m_cellSize = 0.9f;
-
-    void initCamera();
-    void drawCell(float x, float y, float z, bool alive);
+    Mesh m_cubeMesh;
+    Material m_instancedMaterial;
+    Shader m_instancingShader;
+    int m_instanceCount = 0;
+    Matrix *m_transforms;
 };

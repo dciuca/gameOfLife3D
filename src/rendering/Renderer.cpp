@@ -1,9 +1,35 @@
 #include "Renderer.h"
+#include "Config.h"
+#include "raymath.h"
+#include "raylib.h"
+#include "Utils.h"
+
+#define GLSL_VERSION 330
+#define MAX_INSTANCES 100000
 
 Renderer::Renderer(const Grid &grid)
     : m_grid(grid)
 {
     initCamera();
+    initMesh();
+    m_transforms = (Matrix *)RL_CALLOC(MAX_INSTANCES, sizeof(Matrix));
+    if (!m_transforms)
+    {
+        Utils::log("ERROR: Cannot allocate m_transforms!", Utils::LogLevel::ERROR);
+    }
+}
+
+Renderer::~Renderer()
+{
+    UnloadMesh(m_cubeMesh);
+    UnloadMaterial(m_instancedMaterial);
+    UnloadShader(m_instancingShader);
+
+    if (m_transforms)
+    {
+        RL_FREE(m_transforms);
+        m_transforms = nullptr;
+    }
 }
 
 void Renderer::beginFrame()
@@ -22,67 +48,61 @@ void Renderer::renderGrid()
 {
     BeginMode3D(m_camera);
 
-    const auto &data = m_grid.getGridDataReadOnly();
+    float cameraPos[3] = {m_camera.position.x, m_camera.position.y, m_camera.position.z};
+    SetShaderValue(m_instancingShader, m_instancingShader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
 
-    const size_t logicWidth = m_grid.getWidth() - Grid::GUARD_CELL;
-    const size_t logicHeight = m_grid.getHeight() - Grid::GUARD_CELL;
-    const size_t logicDepth = m_grid.getDepth() - Grid::GUARD_CELL;
+    collectCellTransforms();
 
-    const size_t physWidth = m_grid.getWidth();
-    const size_t physHeight = m_grid.getHeight();
-    const size_t physWH = physWidth * physHeight;
-
-    // Offset per centrare la griglia nell'origine (0,0,0)
-    const float offsetX = static_cast<float>(logicWidth) / 2.0f;
-    const float offsetY = static_cast<float>(logicHeight) / 2.0f;
-    const float offsetZ = static_cast<float>(logicDepth) / 2.0f;
-
-    // Itera sulle celle logiche (da 1 a W, da 1 a H, da 1 a D)
-    for (size_t z = 1; z <= logicDepth; z++)
+    if (m_instanceCount > 0)
     {
-        for (size_t y = 1; y <= logicHeight; y++)
-        {
-            for (size_t x = 1; x <= logicWidth; x++)
-            {
-                size_t idx = x + y * physWidth + z * physWH;
-
-                if (data[idx] == 1)
-                {
-                    // Coordinate 3D centrate
-                    float fx = static_cast<float>(x - 1) - offsetX;
-                    float fy = static_cast<float>(y - 1) - offsetY;
-                    float fz = static_cast<float>(z - 1) - offsetZ;
-
-                    drawCell(fx, fy, fz, true);
-                }
-            }
-        }
+        DrawMeshInstanced(m_cubeMesh, m_instancedMaterial,
+                          m_transforms,
+                          m_instanceCount);
     }
 
-    // TEST
-    // DrawCube({0, 0, 0}, 1.0f, 1.0f, 1.0f, RED);
-    // DrawCubeWires({0, 0, 0}, 1.0f, 1.0f, 1.0f, BLACK);
+    // 🔄 Test: disegna i cubi uno per uno (lento ma visivo)
+    // for (int i = 0; i < m_instanceCount; i++)
+    // {
+    //     Matrix &transform = m_transforms[i];
+    //     Vector3 pos = {transform.m12, transform.m13, transform.m14};
+    //     DrawCube(pos, m_cellSize, m_cellSize, m_cellSize, GREEN);
+    //     DrawCubeWires(pos, m_cellSize, m_cellSize, m_cellSize, DARKGREEN);
+    // }
 
     EndMode3D();
-}
-
-void Renderer::drawCell(float x, float y, float z, bool alive)
-{
-    if (alive)
-    {
-        // Cella viva: cubo pieno con colore
-        DrawCube({x, y, z}, m_cellSize, m_cellSize, m_cellSize, GREEN);
-        // Bordo nero per definizione (opzionale)
-        DrawCubeWires({x, y, z}, m_cellSize, m_cellSize, m_cellSize, DARKGREEN);
-    }
 }
 
 void Renderer::updateCamera()
 {
     UpdateCamera(&m_camera, CAMERA_THIRD_PERSON);
+    // UpdateCamera(&m_camera, CAMERA_ORBITAL);
 }
 
 // private
+void Renderer::initMesh()
+{
+    m_cubeMesh = GenMeshCube(1.0f, 1.0f, 1.0f);
+    initInstancedShader();
+}
+
+void Renderer::initInstancedShader()
+{
+    m_instancingShader = LoadShader(
+        "resources/shaders/glsl330/instancing.vs",
+        "resources/shaders/glsl330/instancing.fs");
+
+    m_instancingShader.locs[SHADER_LOC_MATRIX_MVP] = GetShaderLocation(m_instancingShader, "mvp");
+
+    m_instancedMaterial = LoadMaterialDefault();
+    m_instancedMaterial.shader = m_instancingShader;
+    m_instancedMaterial.maps[MATERIAL_MAP_DIFFUSE].color = BLUE;
+
+    // 6. (Opzionale) Puoi anche impostare qui la posizione della luce
+    int lightLoc = GetShaderLocation(m_instancingShader, "lightPos");
+    Vector3 lightPosition = {10.0f, 15.0f, 10.0f};
+    SetShaderValue(m_instancingShader, lightLoc, &lightPosition, SHADER_UNIFORM_VEC3);
+}
+
 void Renderer::initCamera()
 {
     // Grid diagonal
@@ -108,4 +128,72 @@ void Renderer::initCamera()
     m_camera.up = {0.0f, 1.0f, 0.0f};
     m_camera.fovy = 45.0f;
     m_camera.projection = CAMERA_PERSPECTIVE;
+}
+
+void Renderer::collectCellTransforms()
+{
+    const auto &data = m_grid.getGridDataReadOnly();
+
+    const size_t W = m_grid.getWidth();
+    const size_t H = m_grid.getHeight();
+    const size_t D = m_grid.getDepth();
+
+    const size_t logicW = W - 2 * Grid::GUARD_CELL;
+    const size_t logicH = H - 2 * Grid::GUARD_CELL;
+    const size_t logicD = D - 2 * Grid::GUARD_CELL;
+
+    const float offsetX = static_cast<float>(logicW) / 2.0f;
+    const float offsetY = static_cast<float>(logicH) / 2.0f;
+    const float offsetZ = static_cast<float>(logicD) / 2.0f;
+
+    m_instanceCount = 0;
+
+    std::vector<float> xCoords(logicW);
+    std::vector<float> yCoords(logicH);
+    std::vector<float> zCoords(logicD);
+
+    for (size_t x = 1; x <= logicW; x++)
+    {
+        xCoords[x - 1] = static_cast<float>(x - 1) - offsetX;
+    }
+    for (size_t y = 1; y <= logicH; y++)
+    {
+        yCoords[y - 1] = static_cast<float>(y - 1) - offsetY;
+    }
+    for (size_t z = 1; z <= logicD; z++)
+    {
+        zCoords[z - 1] = static_cast<float>(z - 1) - offsetZ;
+    }
+
+    for (size_t z = 1; z <= logicD; z++)
+    {
+        float fz = zCoords[z - 1];
+        for (size_t y = 1; y <= logicH; y++)
+        {
+            float fy = yCoords[y - 1];
+            for (size_t x = 1; x <= logicW; x++)
+            {
+                size_t idx = x + y * W + z * W * H;
+
+                if (data[idx] == 1)
+                {
+                    if (m_instanceCount >= MAX_INSTANCES)
+                    {
+                        Utils::log("Warning: m_instanceCount >= MAX_INSTANCES !",
+                                   Utils::LogLevel::WARNING);
+                        return;
+                    }
+
+                    float fx = xCoords[x - 1];
+
+                    Matrix transform = MatrixTranslate(fx, fy, fz);
+                    Matrix scale = MatrixScale(m_cellSize, m_cellSize, m_cellSize);
+                    Matrix final = MatrixMultiply(scale, transform);
+
+                    m_transforms[m_instanceCount] = final;
+                    m_instanceCount++;
+                }
+            }
+        }
+    }
 }
