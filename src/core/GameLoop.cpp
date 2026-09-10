@@ -3,8 +3,6 @@
 #include "raylib.h"
 #include "Utils.h"
 
-#include <random> // DEBUG
-
 GameLoop::GameLoop()
     : m_currentGrid(std::make_unique<Grid>(GameConfig::GRID_WIDTH, GameConfig::GRID_HEIGHT, GameConfig::GRID_DEPTH)),
       m_nextGrid(std::make_unique<Grid>(GameConfig::GRID_WIDTH, GameConfig::GRID_HEIGHT, GameConfig::GRID_DEPTH)),
@@ -16,10 +14,7 @@ GameLoop::GameLoop()
 
 void GameLoop::Run()
 {
-    // DEBUG
-    Utils::log("Starting...", Utils::LogLevel::INFO);
     Utils::Timer timer;
-    // ----------------------
 
     float simulationTime = 0.0f;
 
@@ -31,24 +26,25 @@ void GameLoop::Run()
         // Time Slicing
         while (simulationTime >= GameConfig::GENERATION_INTERVAL)
         {
-            // DEBUG ----------------
             timer.reset();
-            // ----------------------
 
             computeNextGeneration();
             swapBuffers();
             simulationTime -= GameConfig::GENERATION_INTERVAL;
 
-            // DEBUG ----------------
             timer.stop();
-            Utils::log("computeNextGeneration took: " + std::to_string(timer.elapsedMilliseconds()) + " ms", Utils::LogLevel::DEBUG);
-            // ----------------------
         }
+        std::string msg =
+            std::to_string(GameConfig::GRID_WIDTH) + "x" +
+            std::to_string(GameConfig::GRID_HEIGHT) + "x" +
+            std::to_string(GameConfig::GRID_DEPTH) + " compute time: " +
+            std::to_string(timer.elapsedMilliseconds()) + " ms";
 
         // Render
         m_renderer->updateCamera();
         m_renderer->beginFrame();
         m_renderer->renderGrid();
+        m_renderer->writeText(msg.data(), 20, {10, 40}, BLUE);
         m_renderer->endFrame();
     }
     CloseWindow();
@@ -56,8 +52,6 @@ void GameLoop::Run()
 
 void GameLoop::computeNextGeneration()
 {
-    Utils::log("Computing next generation...", Utils::LogLevel::DEBUG);
-
     const auto &currentData = m_currentGrid->getGridData();
     auto &nextData = m_nextGrid->getGridData();
 

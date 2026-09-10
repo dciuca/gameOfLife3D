@@ -14,6 +14,7 @@ public:
     void endFrame();
     void renderGrid();
     void updateCamera();
+    void writeText(char *text, int fontSize, Vector2 pos, Color color);
 
 private:
     void initCamera();

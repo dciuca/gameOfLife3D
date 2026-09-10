@@ -79,6 +79,11 @@ void Renderer::updateCamera()
     UpdateCamera(&m_camera, CAMERA_ORBITAL);
 }
 
+void Renderer::writeText(char *text, int fontsize, Vector2 pos, Color color)
+{
+    DrawText(text, pos.x, pos.y, fontsize, color);
+}
+
 // private
 void Renderer::initMesh()
 {
