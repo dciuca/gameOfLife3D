@@ -12,6 +12,7 @@ Renderer::Renderer(const Grid &grid)
 {
     initCamera();
     initMesh();
+    initBackground();
     m_transforms = (Matrix *)RL_CALLOC(MAX_INSTANCES, sizeof(Matrix));
     if (!m_transforms)
     {
@@ -36,6 +37,10 @@ void Renderer::beginFrame()
 {
     BeginDrawing();
     ClearBackground(RAYWHITE);
+    DrawTexturePro(m_backgroundTexture,
+                   {0, 0, (float)m_backgroundTexture.width, (float)m_backgroundTexture.height},
+                   {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()},
+                   {0, 0}, 0.0f, WHITE);
 }
 
 void Renderer::endFrame()
@@ -105,8 +110,13 @@ void Renderer::initInstancedShader()
 
     // Light Position
     int lightLoc = GetShaderLocation(m_instancingShader, "lightPos");
-    Vector3 lightPosition = {20.0f, 40.0f, 15.0f};
-    SetShaderValue(m_instancingShader, lightLoc, &lightPosition, SHADER_UNIFORM_VEC3);
+    float lightPos[3] = {m_camera.position.x, m_camera.position.y + 20.0f, m_camera.position.z};
+    SetShaderValue(m_instancingShader, lightLoc, lightPos, SHADER_UNIFORM_VEC3);
+}
+
+void Renderer::initBackground()
+{
+    m_backgroundTexture = LoadTexture("resources/textures/bckg.png");
 }
 
 void Renderer::initCamera()

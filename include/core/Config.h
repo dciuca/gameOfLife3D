@@ -11,9 +11,9 @@ struct RaylibConfig
 
 struct GameConfig
 {
-    static constexpr size_t GRID_WIDTH = 50;
-    static constexpr size_t GRID_HEIGHT = 50;
-    static constexpr size_t GRID_DEPTH = 50;
+    static constexpr size_t GRID_WIDTH = 35;
+    static constexpr size_t GRID_HEIGHT = 35;
+    static constexpr size_t GRID_DEPTH = 35;
 
     static constexpr int SURVIVE_MIN = 5;
     static constexpr int SURVIVE_MAX = 7;

@@ -5,7 +5,7 @@ in vec2 fragTexCoord;
 in vec3 fragNormal;
 
 uniform vec4 cubeColor = vec4(0.2, 0.6, 1.0, 1.0);
-uniform vec3 lightPos = vec3(10.0, 15.0, 10.0);
+uniform vec3 lightPos;
 
 out vec4 finalColor;
 

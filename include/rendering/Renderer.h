@@ -20,6 +20,7 @@ private:
     void initCamera();
     void initMesh();
     void initInstancedShader();
+    void initBackground();
     void collectCellTransforms();
 
 private:
@@ -31,4 +32,5 @@ private:
     Shader m_instancingShader;
     int m_instanceCount = 0;
     Matrix *m_transforms;
+    Texture2D m_backgroundTexture;
 };
