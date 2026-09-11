@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include "PatternLibrary.h"
 
 struct RaylibConfig
 {
@@ -11,14 +12,23 @@ struct RaylibConfig
 
 struct GameConfig
 {
-    static constexpr size_t GRID_WIDTH = 35;
-    static constexpr size_t GRID_HEIGHT = 35;
-    static constexpr size_t GRID_DEPTH = 35;
+    static constexpr size_t GRID_WIDTH = 50;
+    static constexpr size_t GRID_HEIGHT = 50;
+    static constexpr size_t GRID_DEPTH = 50;
 
+    static constexpr PatternLibrary::Pattern INITIAL_PATTERN = PatternLibrary::Pattern::CHAOS_DENSE;
+
+    // Rule B6/S567
     static constexpr int SURVIVE_MIN = 5;
     static constexpr int SURVIVE_MAX = 7;
     static constexpr int BORN_MIN = 6;
     static constexpr int BORN_MAX = 6;
+
+    // Rule B5/S45
+    // static constexpr int SURVIVE_MIN = 4;
+    // static constexpr int SURVIVE_MAX = 5;
+    // static constexpr int BORN_MIN = 5;
+    // static constexpr int BORN_MAX = 5;
 
     static constexpr float GENERATION_INTERVAL = 1.0f; // 1 generation/s
 };
