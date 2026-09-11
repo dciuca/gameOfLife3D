@@ -15,13 +15,13 @@ public:
     void renderGrid();
     Camera3D &getCamera() { return m_camera; };
     void writeText(char *text, int fontSize, Vector2 pos, Color color);
+    void collectCellTransforms();
 
 private:
     void initCamera();
     void initMesh();
     void initInstancedShader();
     void initBackground();
-    void collectCellTransforms();
 
 private:
     Camera3D m_camera;

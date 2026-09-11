@@ -56,8 +56,6 @@ void Renderer::renderGrid()
     float cameraPos[3] = {m_camera.position.x, m_camera.position.y, m_camera.position.z};
     SetShaderValue(m_instancingShader, m_instancingShader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos, SHADER_UNIFORM_VEC3);
 
-    collectCellTransforms();
-
     if (m_instanceCount > 0)
     {
         DrawMeshInstanced(m_cubeMesh, m_instancedMaterial,

@@ -6,7 +6,8 @@
 GameLoop::GameLoop()
     : m_currentGrid(std::make_unique<Grid>(GameConfig::GRID_WIDTH, GameConfig::GRID_HEIGHT, GameConfig::GRID_DEPTH)),
       m_nextGrid(std::make_unique<Grid>(GameConfig::GRID_WIDTH, GameConfig::GRID_HEIGHT, GameConfig::GRID_DEPTH)),
-      m_speedMultiplier(1.0f)
+      m_speedMultiplier(1.0f),
+      m_gridChanged(false)
 {
     initPattern(GameConfig::INITIAL_PATTERN);
     m_renderer = std::make_unique<Renderer>(*m_currentGrid);
@@ -36,6 +37,7 @@ void GameLoop::Run()
                 computeNextGeneration();
                 swapBuffers();
                 simulationTime -= GameConfig::GENERATION_INTERVAL;
+                m_gridChanged = true;
 
                 timer.stop();
             }
@@ -43,6 +45,12 @@ void GameLoop::Run()
         std::string msg = (m_inputHandler.isPaused())
                               ? "GENERATION PAUSED (press P to reesume)"
                               : (std::to_string(GameConfig::GRID_WIDTH) + "x" + std::to_string(GameConfig::GRID_HEIGHT) + "x" + std::to_string(GameConfig::GRID_DEPTH) + " compute time: " + std::to_string(timer.elapsedMilliseconds()) + " ms");
+
+        if (m_gridChanged)
+        {
+            m_renderer->collectCellTransforms();
+            m_gridChanged = false;
+        }
 
         // Render
         m_renderer->beginFrame();

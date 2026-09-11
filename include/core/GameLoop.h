@@ -28,4 +28,5 @@ private:
     PatternLibrary::Pattern m_initPattern;
     InputHandler m_inputHandler;
     float m_speedMultiplier;
+    bool m_gridChanged;
 };
