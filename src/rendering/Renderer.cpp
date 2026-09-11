@@ -5,7 +5,7 @@
 #include "Utils.h"
 
 #define GLSL_VERSION 330
-#define MAX_INSTANCES 100000
+#define MAX_INSTANCES 1000001
 
 Renderer::Renderer(const Grid &grid)
     : m_grid(grid)

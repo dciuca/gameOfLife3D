@@ -12,9 +12,9 @@ struct RaylibConfig
 
 struct GameConfig
 {
-    static constexpr size_t GRID_WIDTH = 50;
-    static constexpr size_t GRID_HEIGHT = 50;
-    static constexpr size_t GRID_DEPTH = 50;
+    static constexpr size_t GRID_WIDTH = 100;
+    static constexpr size_t GRID_HEIGHT = 100;
+    static constexpr size_t GRID_DEPTH = 100;
 
     static constexpr PatternLibrary::Pattern INITIAL_PATTERN = PatternLibrary::Pattern::CHAOS_DENSE;
 
