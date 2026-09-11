@@ -31,6 +31,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
 target_include_directories(${PROJECT_NAME} PRIVATE 
     include/core
     include/rendering
+    include/inputHandling
     include/utils
 )
 
