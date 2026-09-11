@@ -30,5 +30,5 @@ struct GameConfig
     // static constexpr int BORN_MIN = 5;
     // static constexpr int BORN_MAX = 5;
 
-    static constexpr float GENERATION_INTERVAL = 1.0f; // 1 generation/s
+    static constexpr float GENERATION_INTERVAL = 2.0f; // 1 generation every 2s
 };

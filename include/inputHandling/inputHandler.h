@@ -1,14 +1,17 @@
 #pragma once
 
+#include "raylib.h"
+
 class InputHandler
 {
 public:
     InputHandler();
-    ~InputHandler();
+    ~InputHandler() = default;
 
-    void update();
+    void update(Camera3D &camera);
     bool isPaused();
 
 private:
     bool m_isPaused;
+    float m_mouseSensitivity;
 };

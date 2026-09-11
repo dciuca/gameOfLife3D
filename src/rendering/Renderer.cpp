@@ -77,13 +77,6 @@ void Renderer::renderGrid()
     EndMode3D();
 }
 
-void Renderer::updateCamera()
-{
-    // UpdateCamera(&m_camera, CAMERA_FREE);
-    // UpdateCamera(&m_camera, CAMERA_THIRD_PERSON);
-    UpdateCamera(&m_camera, CAMERA_ORBITAL);
-}
-
 void Renderer::writeText(char *text, int fontsize, Vector2 pos, Color color)
 {
     DrawText(text, pos.x, pos.y, fontsize, color);

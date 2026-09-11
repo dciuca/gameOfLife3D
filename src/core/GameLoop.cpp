@@ -21,7 +21,7 @@ void GameLoop::Run()
 
     while (!WindowShouldClose())
     {
-        m_inputHandler.update();
+        m_inputHandler.update(m_renderer->getCamera());
 
         if (!m_inputHandler.isPaused())
         {
@@ -45,7 +45,6 @@ void GameLoop::Run()
                               : (std::to_string(GameConfig::GRID_WIDTH) + "x" + std::to_string(GameConfig::GRID_HEIGHT) + "x" + std::to_string(GameConfig::GRID_DEPTH) + " compute time: " + std::to_string(timer.elapsedMilliseconds()) + " ms");
 
         // Render
-        m_renderer->updateCamera();
         m_renderer->beginFrame();
         m_renderer->renderGrid();
         m_renderer->writeText(msg.data(), 20, {10, 40}, BLUE);

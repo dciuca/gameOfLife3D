@@ -13,7 +13,7 @@ public:
     void beginFrame();
     void endFrame();
     void renderGrid();
-    void updateCamera();
+    Camera3D &getCamera() { return m_camera; };
     void writeText(char *text, int fontSize, Vector2 pos, Color color);
 
 private:
