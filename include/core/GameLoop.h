@@ -5,6 +5,7 @@
 #include "Grid.h"
 #include "Renderer.h"
 #include "PatternLibrary.h"
+#include "inputHandler.h"
 
 class GameLoop
 {
@@ -25,5 +26,6 @@ private:
     std::unique_ptr<Grid> m_nextGrid;
     std::unique_ptr<Renderer> m_renderer;
     PatternLibrary::Pattern m_initPattern;
+    InputHandler m_inputHandler;
     float m_speedMultiplier;
 };

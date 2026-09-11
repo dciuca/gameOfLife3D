@@ -10,6 +10,7 @@ GameLoop::GameLoop()
 {
     initPattern(GameConfig::INITIAL_PATTERN);
     m_renderer = std::make_unique<Renderer>(*m_currentGrid);
+    m_inputHandler = InputHandler();
 }
 
 void GameLoop::Run()
@@ -20,25 +21,28 @@ void GameLoop::Run()
 
     while (!WindowShouldClose())
     {
-        float dt = GetFrameTime();
-        simulationTime += dt * m_speedMultiplier;
+        m_inputHandler.update();
 
-        // Time Slicing
-        while (simulationTime >= GameConfig::GENERATION_INTERVAL)
+        if (!m_inputHandler.isPaused())
         {
-            timer.reset();
+            float dt = GetFrameTime();
+            simulationTime += dt * m_speedMultiplier;
 
-            computeNextGeneration();
-            swapBuffers();
-            simulationTime -= GameConfig::GENERATION_INTERVAL;
+            // Time Slicing
+            while (simulationTime >= GameConfig::GENERATION_INTERVAL)
+            {
+                timer.reset();
 
-            timer.stop();
+                computeNextGeneration();
+                swapBuffers();
+                simulationTime -= GameConfig::GENERATION_INTERVAL;
+
+                timer.stop();
+            }
         }
-        std::string msg =
-            std::to_string(GameConfig::GRID_WIDTH) + "x" +
-            std::to_string(GameConfig::GRID_HEIGHT) + "x" +
-            std::to_string(GameConfig::GRID_DEPTH) + " compute time: " +
-            std::to_string(timer.elapsedMilliseconds()) + " ms";
+        std::string msg = (m_inputHandler.isPaused())
+                              ? "GENERATION PAUSED (press P to reesume)"
+                              : (std::to_string(GameConfig::GRID_WIDTH) + "x" + std::to_string(GameConfig::GRID_HEIGHT) + "x" + std::to_string(GameConfig::GRID_DEPTH) + " compute time: " + std::to_string(timer.elapsedMilliseconds()) + " ms");
 
         // Render
         m_renderer->updateCamera();
