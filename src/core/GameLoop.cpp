@@ -16,7 +16,8 @@ GameLoop::GameLoop()
 
 void GameLoop::Run()
 {
-    Utils::Timer timer;
+    Utils::Timer computeTimer;
+    Utils::Timer drawTimer;
 
     float simulationTime = 0.0f;
 
@@ -32,31 +33,33 @@ void GameLoop::Run()
             // Time Slicing
             while (simulationTime >= GameConfig::GENERATION_INTERVAL)
             {
-                timer.reset();
+                computeTimer.reset();
 
                 computeNextGeneration();
                 swapBuffers();
                 simulationTime -= GameConfig::GENERATION_INTERVAL;
                 m_gridChanged = true;
 
-                timer.stop();
+                computeTimer.stop();
+            }
+
+            if (m_gridChanged)
+            {
+                m_renderer->collectCellTransforms();
+                m_gridChanged = false;
             }
         }
-        std::string msg = (m_inputHandler.isPaused())
-                              ? "GENERATION PAUSED (press P to reesume)"
-                              : (std::to_string(GameConfig::GRID_WIDTH) + "x" + std::to_string(GameConfig::GRID_HEIGHT) + "x" + std::to_string(GameConfig::GRID_DEPTH) + " compute time: " + std::to_string(timer.elapsedMilliseconds()) + " ms");
 
-        if (m_gridChanged)
-        {
-            m_renderer->collectCellTransforms();
-            m_gridChanged = false;
-        }
-
-        // Render
+        drawTimer.reset();
         m_renderer->beginFrame();
         m_renderer->renderGrid();
-        m_renderer->writeText(msg.data(), 20, {10, 40}, BLUE);
+        m_renderer->drawStats(
+            m_inputHandler.isPaused(),
+            computeTimer.elapsedMilliseconds(),
+            drawTimer.elapsedMilliseconds(),
+            RaylibConfig::TARGET_FPS);
         m_renderer->endFrame();
+        drawTimer.stop();
     }
     CloseWindow();
 }

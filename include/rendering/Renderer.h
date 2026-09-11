@@ -14,7 +14,7 @@ public:
     void endFrame();
     void renderGrid();
     Camera3D &getCamera() { return m_camera; };
-    void writeText(char *text, int fontSize, Vector2 pos, Color color);
+    void drawStats(bool paused, double computeMs, double drawMs, int fps);
     void collectCellTransforms();
 
 private:

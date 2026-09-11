@@ -1,8 +1,8 @@
 #include "Renderer.h"
-#include "Config.h"
 #include "raymath.h"
 #include "raylib.h"
 #include "Utils.h"
+#include <format>
 
 #define GLSL_VERSION 330
 #define MAX_INSTANCES 1000001
@@ -63,21 +63,31 @@ void Renderer::renderGrid()
                           m_instanceCount);
     }
 
-    // 🔄 Test: disegna i cubi uno per uno (lento ma visivo)
-    // for (int i = 0; i < m_instanceCount; i++)
-    // {
-    //     Matrix &transform = m_transforms[i];
-    //     Vector3 pos = {transform.m12, transform.m13, transform.m14};
-    //     DrawCube(pos, m_cellSize, m_cellSize, m_cellSize, GREEN);
-    //     DrawCubeWires(pos, m_cellSize, m_cellSize, m_cellSize, DARKGREEN);
-    // }
-
     EndMode3D();
 }
 
-void Renderer::writeText(char *text, int fontsize, Vector2 pos, Color color)
+void Renderer::drawStats(bool paused, double computeMs, double drawMs, int fps)
 {
-    DrawText(text, pos.x, pos.y, fontsize, color);
+    // HUD Line 1 (Compute Stat)
+    std::string line1;
+    if (paused)
+    {
+        line1 = "PAUSED (press P to resume)";
+    }
+    else
+    {
+        line1 = std::format("{} CELLS | compute: {} ms", m_grid.getTotalCells(), computeMs);
+    }
+
+    // HUD Line 2 (Draw Stat)
+    std::string line2 = std::format("TARGET FPS: {} | draw: {} ms", fps, drawMs);
+    double frameBudgetMs = 1000.0 / fps;
+    Color line2Color = (drawMs <= frameBudgetMs) ? GREEN : RED;
+
+    // Draw HUD
+    int y = 40;
+    DrawText(line1.c_str(), 10, y, 20, paused ? YELLOW : BLUE);
+    DrawText(line2.c_str(), 10, y + 25, 20, line2Color);
 }
 
 // private
