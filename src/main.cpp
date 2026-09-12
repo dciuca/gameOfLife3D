@@ -1,5 +1,4 @@
 #include "GameLoop.h"
-#include "raylib.h"
 #include "Config.h"
 
 int main()

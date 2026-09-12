@@ -1,6 +1,5 @@
 #include "GameLoop.h"
 #include "Config.h"
-#include "raylib.h"
 #include "Utils.h"
 
 GameLoop::GameLoop()
