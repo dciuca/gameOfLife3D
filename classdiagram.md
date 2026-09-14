@@ -22,42 +22,61 @@ classDiagram
 %% === Proposed SOLID architecture decoupled from raylib ===
 
 ```mermaid
+---
+config:
+  layout: elk
+---
 classDiagram
-    direction TB
+    direction LR
 
-    class GameLoop
+    class GameLoop {
+        -ICamera m_camera
+        -IRenderer m_renderer
+        -IInputHandler m_inputHandler
+    }
     class IRenderer {
         <<interface>>
     }
     class IInputHandler {
         <<interface>>
     }
-    class CameraState
+    class ICamera {
+        <<interface>>
+        +yaw(float angle)
+        +pitch(float angle)
+        +zoom(float wheel)
+    }
+
     class Grid
     class PatternLibrary
     class Config
-    class RaylibRenderer
-    class RaylibInputHandler
-    %%class raylib
+
+    namespace Raylib {
+        class RaylibRenderer
+        class RaylibInputHandler
+        class RaylibCamera
+    }
 
     GameLoop --> IRenderer
     GameLoop --> IInputHandler
+    GameLoop --> ICamera
     GameLoop --> Config
     GameLoop --> Grid
 
-    RaylibRenderer ..|> IRenderer
-    RaylibInputHandler ..|> IInputHandler
+    RaylibRenderer ..|> IRenderer : implements
+    RaylibInputHandler ..|> IInputHandler : implements
+    RaylibCamera ..|> ICamera : implements
 
     RaylibRenderer --> Grid
-    RaylibRenderer --> CameraState
-    %%RaylibRenderer --> raylib
+    RaylibRenderer --> RaylibCamera: render3D
+    RaylibInputHandler --> RaylibCamera: move cam
 
-    RaylibInputHandler --> CameraState
-    %%RaylibInputHandler --> raylib
-
-    IRenderer --> CameraState
-    IInputHandler --> CameraState
+    IRenderer --> ICamera
+    IInputHandler --> ICamera
 
     Config --> PatternLibrary
     PatternLibrary --> Grid
+
+    classDef interface fill:#eef2ff,stroke:#818cf8,stroke-width:2px,color:#1e1b4b
+    cssClass "IRenderer,IInputHandler,ICamera" interface
 ```

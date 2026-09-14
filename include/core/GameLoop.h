@@ -3,18 +3,21 @@
 #include <memory>
 #include "Config.h"
 #include "Grid.h"
-#include "Renderer.h"
 #include "PatternLibrary.h"
-#include "inputHandler.h"
+#include "interfaces/IRenderer.h"
+#include "interfaces/IInputHandler.h"
+#include "interfaces/ICamera.h"
+#include "interfaces/IWindow.h"
 
 class GameLoop
 {
 public:
-    GameLoop();
+    GameLoop(
+        std::unique_ptr<IWindow> window);
+    // std::unique_ptr<ICamera> camera);
     ~GameLoop() = default;
 
     void Run();
-    void setSpeedMultiplier(float multiplier) { m_speedMultiplier = multiplier; }
 
 private:
     void swapBuffers() { m_currentGrid.swap(m_nextGrid); }
@@ -24,9 +27,12 @@ private:
 private:
     std::unique_ptr<Grid> m_currentGrid;
     std::unique_ptr<Grid> m_nextGrid;
-    std::unique_ptr<Renderer> m_renderer;
+    std::unique_ptr<IRenderer> m_renderer;
+    std::unique_ptr<IInputHandler> m_inputHandler;
+    std::unique_ptr<ICamera> m_camera;
+    std::unique_ptr<IWindow> m_window;
+
     PatternLibrary::Pattern m_initPattern;
-    InputHandler m_inputHandler;
     float m_speedMultiplier;
     bool m_gridChanged;
 };

@@ -2,15 +2,24 @@
 #include "Config.h"
 #include "Utils.h"
 
-GameLoop::GameLoop()
+#include "RaylibInputHandler.h"
+#include "RaylibRenderer.h"
+#include "RaylibWindow.h"
+
+GameLoop::GameLoop(
+    std::unique_ptr<IWindow> window)
+    // std::unique_ptr<ICamera> camera)
     : m_currentGrid(std::make_unique<Grid>(GameConfig::GRID_WIDTH, GameConfig::GRID_HEIGHT, GameConfig::GRID_DEPTH)),
       m_nextGrid(std::make_unique<Grid>(GameConfig::GRID_WIDTH, GameConfig::GRID_HEIGHT, GameConfig::GRID_DEPTH)),
       m_speedMultiplier(1.0f),
-      m_gridChanged(false)
+      m_gridChanged(false),
+      m_window(std::move(window))
+//   m_camera(std::move(camera))
 {
     initPattern(GameConfig::INITIAL_PATTERN);
-    m_renderer = std::make_unique<Renderer>(*m_currentGrid);
-    m_inputHandler = InputHandler();
+    m_camera = std::make_unique<RaylibCamera>();
+    m_renderer = std::make_unique<RaylibRenderer>(*m_currentGrid);
+    m_inputHandler = std::make_unique<RaylibInputHandler>();
 }
 
 void GameLoop::Run()
@@ -20,11 +29,11 @@ void GameLoop::Run()
 
     float simulationTime = 0.0f;
 
-    while (!WindowShouldClose())
+    while (!m_window->shouldClose())
     {
-        m_inputHandler.update(m_renderer->getCamera());
+        m_inputHandler->update(*m_camera);
 
-        if (!m_inputHandler.isPaused())
+        if (!m_inputHandler->isPaused())
         {
             float dt = GetFrameTime();
             simulationTime += dt * m_speedMultiplier;
@@ -51,16 +60,16 @@ void GameLoop::Run()
 
         drawTimer.reset();
         m_renderer->beginFrame();
-        m_renderer->renderGrid();
+        m_renderer->renderGrid(*m_camera);
         m_renderer->drawStats(
-            m_inputHandler.isPaused(),
+            m_inputHandler->isPaused(),
             computeTimer.elapsedMilliseconds(),
             drawTimer.elapsedMilliseconds(),
             RaylibConfig::TARGET_FPS);
         m_renderer->endFrame();
         drawTimer.stop();
     }
-    CloseWindow();
+    m_window->shutdown();
 }
 
 void GameLoop::computeNextGeneration()
