@@ -1,17 +1,19 @@
 #pragma once
 
 #include "core/IInputHandler.h"
-#include "platform/RaylibCamera.h"
+
+class RaylibCamera; // forward declaration
 
 class RaylibInputHandler : public IInputHandler
 {
 public:
-    RaylibInputHandler();
+    RaylibInputHandler(RaylibCamera &camera);
 
-    void update(ICamera &camera) override;
+    void update() override;
     bool isPaused() override;
 
 private:
     bool m_isPaused;
     float m_mouseSensitivity;
+    RaylibCamera &m_camera;
 };

@@ -1,11 +1,14 @@
 #pragma once
 
 #include "platform/RaylibInputHandler.h"
+#include "platform/RaylibCamera.h"
 
-RaylibInputHandler::RaylibInputHandler()
-    : m_isPaused(false), m_mouseSensitivity(0.001f) {};
+RaylibInputHandler::RaylibInputHandler(RaylibCamera &camera)
+    : m_isPaused(false),
+      m_mouseSensitivity(0.001f),
+      m_camera(camera) {};
 
-void RaylibInputHandler::update(ICamera &camera)
+void RaylibInputHandler::update()
 {
     // --------------------------------------
     // PAUSE HANDLING
@@ -22,8 +25,8 @@ void RaylibInputHandler::update(ICamera &camera)
     {
         Vector2 delta = GetMouseDelta();
 
-        camera.yaw(-delta.x * m_mouseSensitivity);
-        camera.pitch(-delta.y * m_mouseSensitivity);
+        m_camera.yaw(-delta.x * m_mouseSensitivity);
+        m_camera.pitch(-delta.y * m_mouseSensitivity);
     }
 
     // --------------------------------------
@@ -32,7 +35,7 @@ void RaylibInputHandler::update(ICamera &camera)
     float wheel = GetMouseWheelMove();
     if (wheel != 0.0f)
     {
-        camera.zoom(-wheel);
+        m_camera.zoom(-wheel);
     }
 }
 

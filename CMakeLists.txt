@@ -30,9 +30,8 @@ target_include_directories(gol_core PUBLIC
 
 # === PLATFORM LIBRARY (con Raylib) ===
 add_library(gol_platform STATIC
-   src/platform/RaylibInputHandler.cpp
-    # src/platform/RaylibRenderer.cpp
-    # src/platform/RaylibCamera.cpp
+    src/platform/RaylibInputHandler.cpp
+    src/platform/RaylibRenderer.cpp
 )
 target_link_libraries(gol_platform PUBLIC gol_core raylib)
 

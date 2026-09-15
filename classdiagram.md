@@ -20,6 +20,9 @@ classDiagram
     class IInputHandler {
         <<interface>>
     }
+    class IWindow {
+        <<interface>>
+    }
     class ICamera {
         <<interface>>
         +yaw(float angle)
@@ -36,23 +39,27 @@ classDiagram
         class RaylibRenderer
         class RaylibInputHandler
         class RaylibCamera
+        class RaylibWindow
     }
 
     main *-- RaylibRenderer : composition root
     main *-- RaylibInputHandler : composition root
     main *-- RaylibCamera : composition root
+    main *-- RaylibWindow : composition root
     main *-- Grid : composition root
     main --> GameLoop : starts
 
     GameLoop --> IRenderer
     GameLoop --> IInputHandler
     GameLoop --> ICamera
+    GameLoop --> IWindow
     GameLoop --> Config
     GameLoop --> Grid
 
     RaylibRenderer ..|> IRenderer : implements
     RaylibInputHandler ..|> IInputHandler : implements
     RaylibCamera ..|> ICamera : implements
+    RaylibWindow ..|> IWindow : implements
 
     RaylibRenderer --> Grid
     RaylibRenderer --> RaylibCamera: render3D

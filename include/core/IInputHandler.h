@@ -7,6 +7,6 @@ class IInputHandler
 public:
     virtual ~IInputHandler() = default;
 
-    virtual void update(ICamera &camera) = 0;
+    virtual void update() = 0;
     virtual bool isPaused() = 0;
 };
