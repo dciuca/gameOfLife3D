@@ -9,8 +9,8 @@
 #define GLSL_VERSION 330
 #define MAX_INSTANCES 1000001
 
-RaylibRenderer::RaylibRenderer(Grid &grid, RaylibCamera &camera)
-    : m_grid(grid), m_camera(camera)
+RaylibRenderer::RaylibRenderer(GridPair &gridPair, RaylibCamera &camera)
+    : m_gridPair(gridPair), m_camera(camera)
 {
     initMesh();
     initBackground();
@@ -78,7 +78,7 @@ void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs, int
     else
     {
         // line1 = std::format("{} CELLS | compute: {} ms", m_grid.getTotalCells(), computeMs);
-        line1 = std::to_string(m_grid.getTotalCells()) + " CELLS | compute: " + std::to_string(computeMs) + " ms";
+        line1 = std::to_string(m_gridPair.current().getTotalCells()) + " CELLS | compute: " + std::to_string(computeMs) + " ms";
     }
 
     // HUD Line 2 (Draw Stat)
@@ -96,6 +96,7 @@ void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs, int
 
 void RaylibRenderer::collectCellTransforms()
 {
+    const auto &m_grid = m_gridPair.current();
     const auto &data = m_grid.getGridDataReadOnly();
 
     const size_t W = m_grid.getWidth();

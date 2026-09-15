@@ -12,9 +12,9 @@ int main()
     // Composition Root for Raylib
     auto window = std::make_unique<RaylibWindow>();
     window->init();
-    auto grid = std::make_shared<Grid>(GameConfig::GRID_WIDTH, GameConfig::GRID_HEIGHT, GameConfig::GRID_DEPTH);
+    auto gridPair = std::make_shared<GridPair>(GameConfig::GRID_WIDTH, GameConfig::GRID_HEIGHT, GameConfig::GRID_DEPTH);
     auto camera = std::make_unique<RaylibCamera>();
-    auto renderer = std::make_unique<RaylibRenderer>(*grid, *camera);
+    auto renderer = std::make_unique<RaylibRenderer>(*gridPair, *camera);
     auto inputHandler = std::make_unique<RaylibInputHandler>(*camera);
 
     //     GameLoop gameLoop(
@@ -24,6 +24,6 @@ int main()
     //         std::move(camera));
     //     gameLoop.Run();
 
-    window->shutdown();
+    // window->shutdown();
     return 0;
 }

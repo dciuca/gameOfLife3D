@@ -6,8 +6,6 @@
 #include <array>
 
 /**
- * @class Grid
- * @brief Represents a dense 3D grid of cells.
  *
  * Cells are stored in a single flat `std::vector<uint8_t>` to keep memory
  * contiguous and access fast. The flat index for a 3D coordinate (x, y, z)
@@ -57,4 +55,20 @@ private:
     size_t m_height;     // Grid height (y-dimension).
     size_t m_depth;      // Grid depth (z-dimension).
     size_t m_totalCells; // Cached total cell count.
+};
+
+class GridPair
+{
+public:
+    GridPair(size_t width, size_t height, size_t depth)
+        : m_current(width, height, depth), m_next(width, height, depth) {}
+
+    Grid &current() { return m_current; }
+    Grid &next() { return m_next; }
+
+    void swap() { std::swap(m_current, m_next); }
+
+private:
+    Grid m_current;
+    Grid m_next;
 };
