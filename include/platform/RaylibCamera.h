@@ -2,7 +2,7 @@
 
 #include "raylib.h"
 #include "rcamera.h"
-#include "../core/interfaces/ICamera.h"
+#include "core/ICamera.h"
 
 class RaylibCamera : public ICamera
 {

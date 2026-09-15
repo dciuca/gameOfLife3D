@@ -1,7 +1,7 @@
 // include/rendering/Renderer.h
 #pragma once
 
-#include "ICamera.h"
+#include "core/ICamera.h"
 
 class IRenderer
 {

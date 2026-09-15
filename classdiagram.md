@@ -1,25 +1,3 @@
-```mermaid
-classDiagram
-    direction LR
-
-    class GameLoop
-    class Grid
-    class PatternLibrary
-    class InputHandler
-    class Renderer
-    class Config
-
-    GameLoop --> Grid
-    GameLoop --> Renderer
-    GameLoop --> PatternLibrary
-    GameLoop --> InputHandler
-    GameLoop --> Config
-    Config --> PatternLibrary
-    PatternLibrary --> Grid
-    Renderer --> Grid
-```
-
-%% === Proposed SOLID architecture decoupled from raylib ===
 
 ```mermaid
 ---
@@ -28,6 +6,8 @@ config:
 ---
 classDiagram
     direction LR
+
+    class main
 
     class GameLoop {
         -ICamera m_camera
@@ -51,11 +31,18 @@ classDiagram
     class PatternLibrary
     class Config
 
+
     namespace Raylib {
         class RaylibRenderer
         class RaylibInputHandler
         class RaylibCamera
     }
+
+    main *-- RaylibRenderer : composition root
+    main *-- RaylibInputHandler : composition root
+    main *-- RaylibCamera : composition root
+    main *-- Grid : composition root
+    main --> GameLoop : starts
 
     GameLoop --> IRenderer
     GameLoop --> IInputHandler

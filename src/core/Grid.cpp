@@ -1,4 +1,4 @@
-#include "Grid.h"
+#include "core/Grid.h"
 
 std::array<int, 26> Grid::preComputeCellsOffset(size_t w, size_t h)
 {

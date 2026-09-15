@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ICamera.h"
+#include "core/ICamera.h"
 
 class IInputHandler
 {
