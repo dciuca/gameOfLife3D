@@ -1,10 +1,12 @@
 #pragma once
 
+#include "core/GameRules.h"
 #include "core/Grid.h"
 #include "core/ICamera.h"
 #include "core/IInputHandler.h"
 #include "core/IRenderer.h"
 #include "core/IWindow.h"
+
 
 #include <memory>
 
@@ -24,6 +26,7 @@ private:
   std::unique_ptr<IInputHandler> m_inputHandler;
   std::unique_ptr<IRenderer> m_renderer;
   std::unique_ptr<IWindow> m_window;
+  std::unique_ptr<GameRules> m_gameRules;
   float m_speedMultiplier;
   bool m_gridChanged;
 };

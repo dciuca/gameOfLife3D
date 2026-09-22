@@ -22,6 +22,7 @@ add_library(gol_core STATIC
     src/core/Grid.cpp
     src/core/PatternLibrary.cpp
     src/core/GameLoop.cpp
+    src/core/GameRules.cpp
 )
 target_include_directories(gol_core PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include

@@ -33,6 +33,7 @@ classDiagram
     class Grid
     class PatternLibrary
     class Config
+    class GameRules
 
 
     namespace Raylib {
@@ -55,6 +56,9 @@ classDiagram
     GameLoop --> IWindow
     GameLoop --> Config
     GameLoop --> Grid
+    GameLoop --> GameRules
+    GameRules --> Grid
+
 
     RaylibRenderer ..|> IRenderer : implements
     RaylibInputHandler ..|> IInputHandler : implements

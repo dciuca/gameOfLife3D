@@ -2,6 +2,7 @@
 
 #include "core/Config.h"
 #include "utils/Utils.h"
+#include <utility>
 
 GameLoop::GameLoop(std::unique_ptr<IWindow> window,
                    std::unique_ptr<IRenderer> renderer,
@@ -34,8 +35,11 @@ void GameLoop::Run() {
       while (simulationTime >= GameConfig::GENERATION_INTERVAL) {
         computeTimer.reset();
 
-        // computeNextGeneration();
-        // swapBuffers();
+        m_gameRules->computeNextGeneration(
+            m_gridPair, GameConfig::SURVIVE_MIN, GameConfig::SURVIVE_MAX,
+            GameConfig::BORN_MIN, GameConfig::BORN_MAX);
+        m_gridPair->swap();
+
         simulationTime -= GameConfig::GENERATION_INTERVAL;
         m_gridChanged = true;
 
