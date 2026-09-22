@@ -1,7 +1,9 @@
 #include "core/GameLoop.h"
 
 #include "core/Config.h"
+#include "core/GameRules.h"
 #include "utils/Utils.h"
+#include <memory>
 #include <utility>
 
 GameLoop::GameLoop(std::unique_ptr<IWindow> window,
@@ -14,6 +16,7 @@ GameLoop::GameLoop(std::unique_ptr<IWindow> window,
       m_window(std::move(window)) {
   m_speedMultiplier = 1.0f;
   m_gridChanged = false;
+  m_gameRules = std::make_unique<GameRules>();
   PatternLibrary::initPattern(m_gridPair->current(),
                               GameConfig::INITIAL_PATTERN);
 }
@@ -57,7 +60,7 @@ void GameLoop::Run() {
     m_renderer->renderGrid();
     m_renderer->drawStats(
         m_inputHandler->isPaused(), computeTimer.elapsedMilliseconds(),
-        drawTimer.elapsedMilliseconds(), RaylibConfig::TARGET_FPS);
+        drawTimer.elapsedMilliseconds(), AppConfig::TARGET_FPS);
     m_renderer->endFrame();
     drawTimer.stop();
   }

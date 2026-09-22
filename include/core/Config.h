@@ -3,8 +3,7 @@
 #include "PatternLibrary.h"
 #include <cstddef>
 
-
-struct RaylibConfig {
+struct AppConfig {
   static constexpr int TARGET_FPS = 60;
   static constexpr int SCREEN_WIDTH = 1280;
   static constexpr int SCREEN_HEIGHT = 720;
