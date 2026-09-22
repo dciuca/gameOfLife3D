@@ -1,5 +1,4 @@
 #include "core/GameLoop.h"
-#include "core/PatternLibrary.h"
 
 #include "core/Config.h"
 #include "utils/Utils.h"
@@ -16,7 +15,6 @@ GameLoop::GameLoop(std::unique_ptr<IWindow> window,
   m_gridChanged = false;
   PatternLibrary::initPattern(m_gridPair->current(),
                               GameConfig::INITIAL_PATTERN);
-  Utils::log("NINT OK!!!!!!");
 }
 
 void GameLoop::Run() {

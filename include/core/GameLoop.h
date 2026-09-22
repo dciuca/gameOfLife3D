@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/Grid.h" // contiene Grid e GridPair
+#include "core/Grid.h"
 #include "core/ICamera.h"
 #include "core/IInputHandler.h"
 #include "core/IRenderer.h"
