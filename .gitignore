@@ -68,3 +68,6 @@ vcpkg_installed/
 Testing/
 .cache/
 _deadspace/
+
+# personal settings
+.vscode/*
