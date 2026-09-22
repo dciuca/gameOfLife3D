@@ -2,27 +2,26 @@
 
 GameRules::GameRules() {}
 
-void GameRules::computeNextGeneration(std::shared_ptr<GridPair> gridPair,
-                                      size_t sMin, size_t sMax, size_t bMin,
-                                      size_t bMax) {
-  const auto &currentData = gridPair->current().getGridData();
-  auto &nextData = gridPair->next().getGridData();
+void GameRules::computeNextGeneration(GridPair &gridPair, size_t sMin,
+                                      size_t sMax, size_t bMin, size_t bMax) {
+  const auto &currentData = gridPair.current().getGridDataReadOnly();
+  auto &nextData = gridPair.next().getGridData();
 
   // Get Physical Dimensions (including guard cells)
-  const size_t physWidth = gridPair->current().getWidth();
-  const size_t physHeight = gridPair->current().getHeight();
-  const size_t physDepth = gridPair->current().getDepth();
+  const size_t physWidth = gridPair.current().getWidth();
+  const size_t physHeight = gridPair.current().getHeight();
+  const size_t physDepth = gridPair.current().getDepth();
   const size_t physWH = physWidth * physHeight;
 
   // Get the Cell pre-computed offsets
-  const auto &offsets = gridPair->current().getOffsets();
+  const auto &offsets = gridPair.current().getOffsets();
 
   // Get Logical Dimensions (no guard cells)
   const size_t logicWidth = physWidth - 2 * Grid::GUARD_CELL;
   const size_t logicHeight = physHeight - 2 * Grid::GUARD_CELL;
   const size_t logicDepth = physDepth - 2 * Grid::GUARD_CELL;
 
-  gridPair->next().resetGrid();
+  gridPair.next().resetGrid();
 
   for (size_t z = 1; z <= logicDepth; z++) {
     for (size_t y = 1; y <= logicHeight; y++) {

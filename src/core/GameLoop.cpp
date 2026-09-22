@@ -36,7 +36,7 @@ void GameLoop::Run() {
         computeTimer.reset();
 
         m_gameRules->computeNextGeneration(
-            m_gridPair, GameConfig::SURVIVE_MIN, GameConfig::SURVIVE_MAX,
+            *m_gridPair, GameConfig::SURVIVE_MIN, GameConfig::SURVIVE_MAX,
             GameConfig::BORN_MIN, GameConfig::BORN_MAX);
         m_gridPair->swap();
 
