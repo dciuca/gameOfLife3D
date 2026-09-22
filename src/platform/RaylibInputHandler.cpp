@@ -1,5 +1,3 @@
-#pragma once
-
 #include "platform/RaylibInputHandler.h"
 #include "platform/RaylibCamera.h"
 
