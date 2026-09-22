@@ -1,10 +1,10 @@
 #pragma once
 
-class IWindow
-{
+class IWindow {
 public:
-    virtual ~IWindow() = default;
-    virtual void init() = 0;
-    virtual void shutdown() = 0;
-    virtual bool shouldClose() const = 0;
+  virtual ~IWindow() = default;
+  virtual void init() = 0;
+  virtual void shutdown() = 0;
+  virtual bool shouldClose() const = 0;
+  virtual float getTimeFrame() = 0;
 };

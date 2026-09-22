@@ -1,0 +1,62 @@
+#include "core/GameLoop.h"
+#include "core/PatternLibrary.h"
+
+#include "core/Config.h"
+#include "utils/Utils.h"
+
+GameLoop::GameLoop(std::unique_ptr<IWindow> window,
+                   std::unique_ptr<IRenderer> renderer,
+                   std::unique_ptr<IInputHandler> inputHandler,
+                   std::unique_ptr<ICamera> camera,
+                   std::shared_ptr<GridPair> gridPair)
+    : m_gridPair(std::move(gridPair)), m_camera(std::move(camera)),
+      m_inputHandler(std::move(inputHandler)), m_renderer(std::move(renderer)),
+      m_window(std::move(window)) {
+  m_speedMultiplier = 1.0f;
+  m_gridChanged = false;
+  PatternLibrary::initPattern(m_gridPair->current(),
+                              GameConfig::INITIAL_PATTERN);
+  Utils::log("NINT OK!!!!!!");
+}
+
+void GameLoop::Run() {
+  Utils::Timer computeTimer;
+  Utils::Timer drawTimer;
+
+  float simulationTime = 0.0f;
+
+  while (!m_window->shouldClose()) {
+    m_inputHandler->update();
+
+    if (!m_inputHandler->isPaused()) {
+      float dt = m_window->getTimeFrame();
+      simulationTime += dt * m_speedMultiplier;
+
+      // Time Slicing
+      while (simulationTime >= GameConfig::GENERATION_INTERVAL) {
+        computeTimer.reset();
+
+        // computeNextGeneration();
+        // swapBuffers();
+        simulationTime -= GameConfig::GENERATION_INTERVAL;
+        m_gridChanged = true;
+
+        computeTimer.stop();
+      }
+
+      if (m_gridChanged) {
+        m_renderer->collectCellTransforms();
+        m_gridChanged = false;
+      }
+    }
+
+    drawTimer.reset();
+    m_renderer->beginFrame();
+    m_renderer->renderGrid();
+    m_renderer->drawStats(
+        m_inputHandler->isPaused(), computeTimer.elapsedMilliseconds(),
+        drawTimer.elapsedMilliseconds(), RaylibConfig::TARGET_FPS);
+    m_renderer->endFrame();
+    drawTimer.stop();
+  }
+}
