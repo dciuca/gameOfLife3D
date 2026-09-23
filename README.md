@@ -2,11 +2,10 @@
 
 Conway's Game of Life extended to three dimensions, written in C++20 and rendered with [raylib](https://www.raylib.com/).
 
-<!-- TODO: add demo GIF, e.g.
 <p align="center">
   <img src="docs/demo.gif" alt="Game of Life 3D demo" width="800">
 </p>
--->
+
 
 ## About
 
