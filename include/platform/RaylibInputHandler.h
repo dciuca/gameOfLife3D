@@ -2,18 +2,14 @@
 
 #include "core/IInputHandler.h"
 
-class RaylibCamera; // forward declaration
-
 class RaylibInputHandler : public IInputHandler
 {
 public:
-    RaylibInputHandler(RaylibCamera &camera);
+    RaylibInputHandler();
 
-    void update() override;
-    bool isPaused() override;
+    InputState poll() override;
 
 private:
-    bool m_isPaused;
-    float m_mouseSensitivity;
-    RaylibCamera &m_camera;
+    float m_rotateSensitivity;
+    float m_panSensitivity;
 };

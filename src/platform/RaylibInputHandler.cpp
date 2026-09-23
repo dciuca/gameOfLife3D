@@ -1,46 +1,45 @@
 #include "platform/RaylibInputHandler.h"
-#include "platform/RaylibCamera.h"
+#include "raylib.h"
 
-RaylibInputHandler::RaylibInputHandler(RaylibCamera &camera)
-    : m_isPaused(false),
-      m_mouseSensitivity(0.001f),
-      m_camera(camera) {};
+RaylibInputHandler::RaylibInputHandler()
+    : m_rotateSensitivity(0.001f),
+      m_panSensitivity(0.001f) {};
 
-void RaylibInputHandler::update()
+InputState RaylibInputHandler::poll()
 {
+    InputState input;
+
     // --------------------------------------
     // PAUSE HANDLING
     // --------------------------------------
-    if (IsKeyPressed(KEY_P))
-    {
-        m_isPaused = !m_isPaused;
-    }
+    input.togglePause = IsKeyPressed(KEY_P);
+
+    const Vector2 delta = GetMouseDelta();
 
     // --------------------------------------
-    // CAMERA ROTATION
+    // CAMERA ROTATION (left drag)
     // --------------------------------------
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
     {
-        Vector2 delta = GetMouseDelta();
-
-        m_camera.yaw(-delta.x * m_mouseSensitivity);
-        m_camera.pitch(-delta.y * m_mouseSensitivity);
+        input.yaw = -delta.x * m_rotateSensitivity;
+        input.pitch = -delta.y * m_rotateSensitivity;
     }
 
     // --------------------------------------
-    // CAMERA ZOOM
+    // CAMERA PAN (right drag)
     // --------------------------------------
-    float wheel = GetMouseWheelMove();
-    if (wheel != 0.0f)
+    // The scene follows the mouse: dragging right moves the camera left
+    if (IsMouseButtonDown(MOUSE_BUTTON_RIGHT))
     {
-        m_camera.zoom(-wheel);
+        input.panRight = -delta.x * m_panSensitivity;
+        input.panUp = delta.y * m_panSensitivity;
     }
-}
 
-// --------------------------------------
-// PAUSE HANDLING
-// --------------------------------------
-bool RaylibInputHandler::isPaused()
-{
-    return m_isPaused;
+    // --------------------------------------
+    // CAMERA ZOOM (wheel)
+    // --------------------------------------
+    // Wheel up = move closer to the target
+    input.zoom = -GetMouseWheelMove();
+
+    return input;
 }

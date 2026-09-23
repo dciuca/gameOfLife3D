@@ -20,6 +20,9 @@ public:
   void Run();
 
 private:
+  void handleInput(const InputState &input);
+
+private:
   std::unique_ptr<IWindow> m_window;
   std::shared_ptr<GridPair> m_gridPair;
   std::unique_ptr<ICamera> m_camera;
@@ -28,4 +31,5 @@ private:
   std::unique_ptr<GameRules> m_gameRules;
   float m_speedMultiplier;
   bool m_gridChanged;
+  bool m_isPaused;
 };

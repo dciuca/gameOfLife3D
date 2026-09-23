@@ -29,34 +29,40 @@ public:
   void pitch(float angle) override {
     CameraPitch(&m_camera, angle, true, true, false);
   }
-  void zoom(float wheel) override {
-    // CameraMoveToTarget(&m_camera, wheel);
 
-    if (wheel == 0.0f)
-      return;
-    float step = 0.1f;
+  // Pan amounts are relative to the distance from the target,
+  // so the movement speed feels the same at any zoom level.
+  void pan(float right, float up) override {
+    const float distance = Vector3Distance(m_camera.position, m_camera.target);
 
-    Ray ray = GetMouseRay(GetMousePosition(), m_camera);
-    if (fabsf(ray.direction.y) < 1e-4f)
-      return;
+    const Vector3 rightDir = GetCameraRight(&m_camera);
+    const Vector3 upDir =
+        Vector3CrossProduct(rightDir, GetCameraForward(&m_camera));
 
-    float t = -ray.position.y / ray.direction.y;
-    if (t < 0.0f)
-      return;
+    const Vector3 offset =
+        Vector3Add(Vector3Scale(rightDir, right * distance),
+                   Vector3Scale(upDir, up * distance));
 
-    Vector3 P = Vector3Add(ray.position, Vector3Scale(ray.direction, t));
-
-    float k = 1.0f + wheel * step;
-    if (k < 0.05f)
-      k = 0.05f; // clamp per non passare attraverso P
-
-    m_camera.target =
-        Vector3Add(P, Vector3Scale(Vector3Subtract(m_camera.target, P), k));
-    m_camera.position =
-        Vector3Add(P, Vector3Scale(Vector3Subtract(m_camera.position, P), k));
+    m_camera.position = Vector3Add(m_camera.position, offset);
+    m_camera.target = Vector3Add(m_camera.target, offset);
   }
+
+  // Zoom is proportional to the distance from the target:
+  // fast when far away, precise when close.
+  void zoom(float amount) override {
+    const float distance = Vector3Distance(m_camera.position, m_camera.target);
+    const float newDistance =
+        Clamp(distance * (1.0f + amount * ZOOM_STEP), MIN_DISTANCE, MAX_DISTANCE);
+
+    CameraMoveToTarget(&m_camera, newDistance - distance);
+  }
+
   Camera3D &getCamera() { return m_camera; }
 
 private:
+  static constexpr float ZOOM_STEP = 0.1f; // 10% of the distance per step
+  static constexpr float MIN_DISTANCE = 2.0f;
+  static constexpr float MAX_DISTANCE = 1000.0f;
+
   Camera3D m_camera;
 };

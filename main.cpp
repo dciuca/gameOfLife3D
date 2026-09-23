@@ -16,7 +16,7 @@ int main() {
       GameConfig::GRID_WIDTH, GameConfig::GRID_HEIGHT, GameConfig::GRID_DEPTH);
   auto camera = std::make_unique<RaylibCamera>();
   auto renderer = std::make_unique<RaylibRenderer>(*gridPair, *camera);
-  auto inputHandler = std::make_unique<RaylibInputHandler>(*camera);
+  auto inputHandler = std::make_unique<RaylibInputHandler>();
 
   GameLoop gameLoop(std::move(window), std::move(renderer),
                     std::move(inputHandler), std::move(camera), gridPair);

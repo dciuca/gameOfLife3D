@@ -16,6 +16,7 @@ GameLoop::GameLoop(std::unique_ptr<IWindow> window,
       m_window(std::move(window)) {
   m_speedMultiplier = 1.0f;
   m_gridChanged = true;
+  m_isPaused = false;
   m_gameRules = std::make_unique<GameRules>();
   PatternLibrary::initPattern(m_gridPair->current(),
                               GameConfig::INITIAL_PATTERN);
@@ -28,9 +29,9 @@ void GameLoop::Run() {
   float simulationTime = 0.0f;
 
   while (!m_window->shouldClose()) {
-    m_inputHandler->update();
+    handleInput(m_inputHandler->poll());
 
-    if (!m_inputHandler->isPaused()) {
+    if (!m_isPaused) {
       float dt = m_window->getTimeFrame();
       simulationTime += dt * m_speedMultiplier;
 
@@ -59,9 +60,28 @@ void GameLoop::Run() {
     m_renderer->beginFrame();
     m_renderer->renderGrid();
     m_renderer->drawStats(
-        m_inputHandler->isPaused(), computeTimer.elapsedMilliseconds(),
+        m_isPaused, computeTimer.elapsedMilliseconds(),
         drawTimer.elapsedMilliseconds(), AppConfig::TARGET_FPS);
     m_renderer->endFrame();
     drawTimer.stop();
+  }
+}
+
+void GameLoop::handleInput(const InputState &input) {
+  if (input.togglePause) {
+    m_isPaused = !m_isPaused;
+  }
+
+  if (input.yaw != 0.0f) {
+    m_camera->yaw(input.yaw);
+  }
+  if (input.pitch != 0.0f) {
+    m_camera->pitch(input.pitch);
+  }
+  if (input.panRight != 0.0f || input.panUp != 0.0f) {
+    m_camera->pan(input.panRight, input.panUp);
+  }
+  if (input.zoom != 0.0f) {
+    m_camera->zoom(input.zoom);
   }
 }

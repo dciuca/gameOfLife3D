@@ -67,10 +67,8 @@ classDiagram
 
     RaylibRenderer --> Grid
     RaylibRenderer --> RaylibCamera: render3D
-    RaylibInputHandler --> RaylibCamera: move cam
 
     IRenderer --> ICamera
-    IInputHandler --> ICamera
 
     Config --> PatternLibrary
     PatternLibrary --> Grid
