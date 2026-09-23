@@ -21,7 +21,5 @@ int main() {
   GameLoop gameLoop(std::move(window), std::move(renderer),
                     std::move(inputHandler), std::move(camera), gridPair);
   gameLoop.Run();
-
-  window->shutdown();
   return 0;
 }

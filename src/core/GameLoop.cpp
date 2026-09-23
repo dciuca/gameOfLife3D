@@ -15,7 +15,7 @@ GameLoop::GameLoop(std::unique_ptr<IWindow> window,
       m_inputHandler(std::move(inputHandler)), m_renderer(std::move(renderer)),
       m_window(std::move(window)) {
   m_speedMultiplier = 1.0f;
-  m_gridChanged = false;
+  m_gridChanged = true;
   m_gameRules = std::make_unique<GameRules>();
   PatternLibrary::initPattern(m_gridPair->current(),
                               GameConfig::INITIAL_PATTERN);

@@ -10,9 +10,9 @@ struct AppConfig {
 };
 
 struct GameConfig {
-  static constexpr size_t GRID_WIDTH = 100;
-  static constexpr size_t GRID_HEIGHT = 80;
-  static constexpr size_t GRID_DEPTH = 80;
+  static constexpr size_t GRID_WIDTH = 180;
+  static constexpr size_t GRID_HEIGHT = 4;
+  static constexpr size_t GRID_DEPTH = 180;
 
   static constexpr PatternLibrary::Pattern INITIAL_PATTERN =
       PatternLibrary::Pattern::CHAOS_DENSE;
@@ -29,5 +29,6 @@ struct GameConfig {
   // static constexpr int BORN_MIN = 5;
   // static constexpr int BORN_MAX = 5;
 
-  static constexpr float GENERATION_INTERVAL = 2.0f; // 1 generation every 2s
+  static constexpr float GENERATION_INTERVAL =
+      0.25f; // 2.0f = 1 generation every 2s
 };
