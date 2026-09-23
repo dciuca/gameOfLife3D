@@ -155,3 +155,7 @@ resources/         shaders and textures
 tests/             GoogleTest unit tests
 main.cpp           composition root
 ```
+
+## License
+
+Released under the [MIT License](LICENSE).
