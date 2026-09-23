@@ -16,7 +16,7 @@ target_link_libraries(tests
 )
 
 target_include_directories(tests PRIVATE 
-    ${CMAKE_SOURCE_DIR}/include/core
+    ${CMAKE_SOURCE_DIR}/include
 )
 
 include(GoogleTest)

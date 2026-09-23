@@ -1,32 +1,35 @@
 #pragma once
 
+#include "core/GameRules.h"
+#include "core/Grid.h"
+#include "core/ICamera.h"
+#include "core/IInputHandler.h"
+#include "core/IRenderer.h"
+#include "core/IWindow.h"
+
 #include <memory>
-#include "Config.h"
-#include "Grid.h"
-#include "Renderer.h"
-#include "PatternLibrary.h"
-#include "inputHandler.h"
 
-class GameLoop
-{
+class GameLoop {
 public:
-    GameLoop();
-    ~GameLoop() = default;
+  GameLoop(std::unique_ptr<IWindow> window, std::unique_ptr<IRenderer> renderer,
+           std::unique_ptr<IInputHandler> inputHandler,
+           std::unique_ptr<ICamera> camera, std::shared_ptr<GridPair> gridPair);
 
-    void Run();
-    void setSpeedMultiplier(float multiplier) { m_speedMultiplier = multiplier; }
+  ~GameLoop() = default;
 
-private:
-    void swapBuffers() { m_currentGrid.swap(m_nextGrid); }
-    void computeNextGeneration();
-    void initPattern(PatternLibrary::Pattern pattern);
+  void Run();
 
 private:
-    std::unique_ptr<Grid> m_currentGrid;
-    std::unique_ptr<Grid> m_nextGrid;
-    std::unique_ptr<Renderer> m_renderer;
-    PatternLibrary::Pattern m_initPattern;
-    InputHandler m_inputHandler;
-    float m_speedMultiplier;
-    bool m_gridChanged;
+  void handleInput(const InputState &input);
+
+private:
+  std::unique_ptr<IWindow> m_window;
+  std::shared_ptr<GridPair> m_gridPair;
+  std::unique_ptr<ICamera> m_camera;
+  std::unique_ptr<IInputHandler> m_inputHandler;
+  std::unique_ptr<IRenderer> m_renderer;
+  std::unique_ptr<GameRules> m_gameRules;
+  float m_speedMultiplier;
+  bool m_gridChanged;
+  bool m_isPaused;
 };

@@ -1,7 +1,7 @@
 // tests/test_grid.cpp
 
 #include <gtest/gtest.h>
-#include "Grid.h"
+#include "core/Grid.h"
 #include <algorithm>
 #include <set>
 

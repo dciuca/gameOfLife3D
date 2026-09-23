@@ -1,6 +1,6 @@
 // src/core/PatternLibrary.cpp
-#include "PatternLibrary.h"
-#include "Utils.h"
+#include "core/PatternLibrary.h"
+#include "utils/Utils.h"
 #include <random>
 #include <cmath>
 
