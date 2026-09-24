@@ -51,7 +51,7 @@ void GameLoop::Run() {
       }
 
       if (m_gridChanged) {
-        m_renderer->collectCellTransforms();
+        m_renderer->onGridChanged(m_gridPair->current());
         m_gridChanged = false;
       }
     }
@@ -59,9 +59,9 @@ void GameLoop::Run() {
     drawTimer.reset();
     m_renderer->beginFrame();
     m_renderer->renderGrid();
-    m_renderer->drawStats(
-        m_isPaused, computeTimer.elapsedMilliseconds(),
-        drawTimer.elapsedMilliseconds(), AppConfig::TARGET_FPS);
+    m_renderer->drawStats(m_isPaused, computeTimer.elapsedMilliseconds(),
+                          drawTimer.elapsedMilliseconds(),
+                          AppConfig::TARGET_FPS);
     m_renderer->endFrame();
     drawTimer.stop();
   }

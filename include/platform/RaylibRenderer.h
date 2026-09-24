@@ -3,13 +3,11 @@
 #include "core/IRenderer.h"
 #include "raylib.h"
 
-
-class GridPair;     // forward declaration
 class RaylibCamera; // forward declaration
 
 class RaylibRenderer : public IRenderer {
 public:
-  RaylibRenderer(GridPair &gridPair, RaylibCamera &camera);
+  RaylibRenderer(RaylibCamera &camera);
   ~RaylibRenderer();
 
   void beginFrame() override;
@@ -17,7 +15,7 @@ public:
   void renderGrid() override;
   void drawStats(bool paused, double computeMs, double drawMs,
                  int fps) override;
-  void collectCellTransforms() override;
+  void onGridChanged(const Grid &grid) override;
 
 private:
   void initMesh();
@@ -25,7 +23,6 @@ private:
   void initBackground();
 
 private:
-  GridPair &m_gridPair;
   RaylibCamera &m_camera;
   float m_cellSize = 0.9f;
   Mesh m_cubeMesh;

@@ -10,8 +10,7 @@
 #define GLSL_VERSION 330
 #define MAX_INSTANCES 1000001
 
-RaylibRenderer::RaylibRenderer(GridPair &gridPair, RaylibCamera &camera)
-    : m_gridPair(gridPair), m_camera(camera) {
+RaylibRenderer::RaylibRenderer(RaylibCamera &camera) : m_camera(camera) {
   initMesh();
   initBackground();
   m_transforms = (Matrix *)RL_CALLOC(MAX_INSTANCES, sizeof(Matrix));
@@ -71,15 +70,11 @@ void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs,
   if (paused) {
     line1 = "PAUSED (press P to resume)";
   } else {
-    // line1 = std::format("{} CELLS | compute: {} ms", m_grid.getTotalCells(),
-    // computeMs);
-    line1 = std::to_string(m_gridPair.current().getTotalCells()) +
+    line1 = std::to_string(m_instanceCount) +
             " CELLS | compute: " + std::to_string(computeMs) + " ms";
   }
 
   // HUD Line 2 (Draw Stat)
-  // std::string line2 = std::format("TARGET FPS: {} | draw: {} ms", fps,
-  // drawMs);
   std::string line2 = "TARGET FPS: " + std::to_string(fps) +
                       " | draw: " + std::to_string(drawMs) + " ms";
 
@@ -92,13 +87,12 @@ void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs,
   DrawText(line2.c_str(), 10, y + 25, 20, line2Color);
 }
 
-void RaylibRenderer::collectCellTransforms() {
-  const auto &m_grid = m_gridPair.current();
-  const auto &data = m_grid.getGridDataReadOnly();
+void RaylibRenderer::onGridChanged(const Grid &grid) {
+  const auto &data = grid.getGridDataReadOnly();
 
-  const size_t W = m_grid.getWidth();
-  const size_t H = m_grid.getHeight();
-  const size_t D = m_grid.getDepth();
+  const size_t W = grid.getWidth();
+  const size_t H = grid.getHeight();
+  const size_t D = grid.getDepth();
 
   const size_t logicW = W - 2 * Grid::GUARD_CELL;
   const size_t logicH = H - 2 * Grid::GUARD_CELL;

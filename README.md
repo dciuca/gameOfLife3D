@@ -54,7 +54,7 @@ classDiagram
             +renderGrid()
             +drawStats(...)
             +endFrame()
-            +collectCellTransforms()
+            +onGridChanged(Grid)
         }
         class IInputHandler {
             <<interface>>
@@ -109,7 +109,7 @@ classDiagram
     RaylibInputHandler ..|> IInputHandler
     RaylibCamera ..|> ICamera
 
-    RaylibRenderer --> GridPair
+    RaylibRenderer ..> Grid
     RaylibRenderer --> RaylibCamera
 ```
 
