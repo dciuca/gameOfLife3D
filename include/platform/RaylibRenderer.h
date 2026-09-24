@@ -3,6 +3,8 @@
 #include "core/IRenderer.h"
 #include "raylib.h"
 
+#include <vector>
+
 class RaylibCamera; // forward declaration
 
 class RaylibRenderer : public IRenderer {
@@ -28,7 +30,6 @@ private:
   Mesh m_cubeMesh;
   Material m_instancedMaterial;
   Shader m_instancingShader;
-  int m_instanceCount = 0;
-  Matrix *m_transforms;
+  std::vector<Matrix> m_transforms; // one per alive cell
   Texture2D m_backgroundTexture;
 };

@@ -2,32 +2,22 @@
 #include "core/Grid.h"
 #include "platform/RaylibCamera.h"
 #include "raylib.h"
-#include "utils/Utils.h"
 
 #include "raymath.h"
+#include <string>
 #include <vector>
 
 #define GLSL_VERSION 330
-#define MAX_INSTANCES 1000001
 
 RaylibRenderer::RaylibRenderer(RaylibCamera &camera) : m_camera(camera) {
   initMesh();
   initBackground();
-  m_transforms = (Matrix *)RL_CALLOC(MAX_INSTANCES, sizeof(Matrix));
-  if (!m_transforms) {
-    Utils::log("ERROR: Cannot allocate m_transforms!", Utils::LogLevel::ERROR);
-  }
 }
 
 RaylibRenderer::~RaylibRenderer() {
   UnloadMesh(m_cubeMesh);
   UnloadMaterial(m_instancedMaterial);
   UnloadTexture(m_backgroundTexture);
-
-  if (m_transforms) {
-    RL_FREE(m_transforms);
-    m_transforms = nullptr;
-  }
 }
 
 void RaylibRenderer::beginFrame() {
@@ -55,9 +45,9 @@ void RaylibRenderer::renderGrid() {
                  m_instancingShader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos,
                  SHADER_UNIFORM_VEC3);
 
-  if (m_instanceCount > 0) {
-    DrawMeshInstanced(m_cubeMesh, m_instancedMaterial, m_transforms,
-                      m_instanceCount);
+  if (!m_transforms.empty()) {
+    DrawMeshInstanced(m_cubeMesh, m_instancedMaterial, m_transforms.data(),
+                      static_cast<int>(m_transforms.size()));
   }
 
   EndMode3D();
@@ -70,7 +60,7 @@ void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs,
   if (paused) {
     line1 = "PAUSED (press P to resume)";
   } else {
-    line1 = std::to_string(m_instanceCount) +
+    line1 = std::to_string(m_transforms.size()) +
             " CELLS | compute: " + std::to_string(computeMs) + " ms";
   }
 
@@ -102,7 +92,9 @@ void RaylibRenderer::onGridChanged(const Grid &grid) {
   const float offsetY = static_cast<float>(logicH) / 2.0f;
   const float offsetZ = static_cast<float>(logicD) / 2.0f;
 
-  m_instanceCount = 0;
+  // clear() keeps the capacity: memory grows only up to the peak of alive
+  // cells and is reused by the next generations
+  m_transforms.clear();
 
   std::vector<float> xCoords(logicW);
   std::vector<float> yCoords(logicH);
@@ -126,20 +118,13 @@ void RaylibRenderer::onGridChanged(const Grid &grid) {
         size_t idx = x + y * W + z * W * H;
 
         if (data[idx] == 1) {
-          if (m_instanceCount >= MAX_INSTANCES) {
-            Utils::log("Warning: m_instanceCount >= MAX_INSTANCES !",
-                       Utils::LogLevel::WARNING);
-            return;
-          }
-
           float fx = xCoords[x - 1];
 
           Matrix transform = MatrixTranslate(fx, fy, fz);
           Matrix scale = MatrixScale(m_cellSize, m_cellSize, m_cellSize);
           Matrix final = MatrixMultiply(scale, transform);
 
-          m_transforms[m_instanceCount] = final;
-          m_instanceCount++;
+          m_transforms.push_back(final);
         }
       }
     }
