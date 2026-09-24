@@ -379,7 +379,69 @@ TEST(GridTest, MultipleGridInstancesAreIndependent)
 }
 
 // ============================================================
-// TEST CASE 12: Logical vs physical dimensions (concept test)
+// TEST CASE 12: Toroidal guard cells
+// ============================================================
+
+TEST(GridTest, GuardCellsMirrorOppositeFacesOnLargeAxes)
+{
+    Grid grid(5, 5, 5); // logical 3x3x3 on every axis -> all axes wrap
+
+    grid.setCellByPosition(3, 2, 2, 1); // last interior x
+    grid.updateGuardCells();
+
+    EXPECT_EQ(grid.getCellByPosition(0, 2, 2), 1); // left guard mirrors x=3
+    EXPECT_EQ(grid.getCellByPosition(4, 2, 2), 0); // right guard mirrors x=1
+}
+
+TEST(GridTest, GuardCellsWrapEdgesAndCorners)
+{
+    Grid grid(5, 5, 5);
+
+    grid.setCellByPosition(1, 1, 1, 1); // interior corner
+    grid.updateGuardCells();
+
+    // The opposite corner guard (and edge/face guards) must see it
+    EXPECT_EQ(grid.getCellByPosition(4, 4, 4), 1);
+    EXPECT_EQ(grid.getCellByPosition(4, 4, 1), 1);
+    EXPECT_EQ(grid.getCellByPosition(4, 1, 4), 1);
+    EXPECT_EQ(grid.getCellByPosition(1, 4, 4), 1);
+    EXPECT_EQ(grid.getCellByPosition(0, 0, 0), 0);
+}
+
+TEST(GridTest, GuardCellsStayDeadOnAxesWithTwoLogicalLayers)
+{
+    Grid grid(5, 4, 5); // logical height 2: wrapping Y would double count
+
+    grid.setCellByPosition(2, 1, 2, 1);
+    grid.setCellByPosition(2, 2, 2, 1);
+    grid.getGridData()[0] = 1; // stale guard value must be cleared
+    grid.updateGuardCells();
+
+    EXPECT_EQ(grid.getCellByPosition(2, 0, 2), 0);
+    EXPECT_EQ(grid.getCellByPosition(2, 3, 2), 0);
+    EXPECT_EQ(grid.getCellByPosition(0, 0, 0), 0);
+}
+
+TEST(GridTest, SingleLayerGridCountsEachNeighbourOnce)
+{
+    Grid grid(5, 3, 5); // logical height 1 (2D game on a torus)
+
+    // Only live cell: interior corner (1,1,1). Its torus neighbours in the
+    // (x,z) plane are 8 distinct cells, one of which wraps to (3,1,3).
+    grid.setCellByPosition(3, 1, 3, 1);
+    grid.updateGuardCells();
+
+    const auto &data = grid.getGridDataReadOnly();
+    const size_t idx = 1 + 1 * 5 + 1 * 5 * 3;
+    int neighbours = 0;
+    for (int offset : grid.getOffsets())
+        neighbours += data[idx + offset];
+
+    EXPECT_EQ(neighbours, 1);
+}
+
+// ============================================================
+// TEST CASE 13: Logical vs physical dimensions (concept test)
 // ============================================================
 
 TEST(GridTest, GridDimensionsAreConsistentWithTotalCells)

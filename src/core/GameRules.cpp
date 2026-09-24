@@ -4,6 +4,9 @@ GameRules::GameRules() {}
 
 void GameRules::computeNextGeneration(GridPair &gridPair, size_t sMin,
                                       size_t sMax, size_t bMin, size_t bMax) {
+  // Toroidal boundaries: the guard cells mirror the opposite faces
+  gridPair.current().updateGuardCells();
+
   const auto &currentData = gridPair.current().getGridDataReadOnly();
   auto &nextData = gridPair.next().getGridData();
 

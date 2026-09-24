@@ -46,6 +46,13 @@ public:
     void resetGrid() { std::fill(m_grid.begin(), m_grid.end(), 0); }
     void setCellByPosition(size_t x, size_t y, size_t z, uint8_t value);
 
+    // Fills the guard cells so the grid behaves as a torus, where every
+    // distinct neighbour is counted once. Axes with >= 3 logical cells wrap
+    // (guard = opposite interior face); axes with 1-2 logical cells keep dead
+    // guards, since wrapping would make a cell count the same neighbour
+    // (or itself) twice.
+    void updateGuardCells();
+
 private:
     static std::array<int, 26> preComputeCellsOffset(size_t w, size_t h);
 
