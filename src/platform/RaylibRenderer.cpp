@@ -6,6 +6,7 @@
 #include "raymath.h"
 #include <string>
 #include <vector>
+#include <cstdio>
 
 #define GLSL_VERSION 330
 
@@ -50,23 +51,31 @@ void RaylibRenderer::renderGrid() {
   EndMode3D();
 }
 
-void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs) {
+void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs,
+                               float speedMultiplier) {
   // HUD Line 1 (Compute Stat)
   std::string line1;
   if (paused) {
     line1 = "PAUSED (press P to resume)";
   } else {
-    line1 = std::to_string(m_transforms.size()) +
-            " CELLS | compute: " + std::to_string(computeMs) + " ms";
+    char buffer[128];
+    snprintf(buffer, sizeof(buffer), "%zu CELLS | compute: %.2f ms",
+             m_transforms.size(), computeMs);
+    line1 = buffer;
   }
 
   // HUD Line 2 (Draw Stat)
   int fps = GetFPS();
-  std::string line2 = "FPS: " + std::to_string(fps) +
-                      " | draw: " + std::to_string(drawMs) + " ms";
-
+  char buffer2[128];
+  snprintf(buffer2, sizeof(buffer2), "FPS: %d | draw: %.2f ms", fps, drawMs);
+  std::string line2 = buffer2;
   double frameBudgetMs = 1000.0 / fps;
   Color line2Color = (drawMs <= frameBudgetMs) ? GREEN : RED;
+
+  // HUD Line 3 (Speed Multiplier)
+  char buffer3[64];
+  snprintf(buffer3, sizeof(buffer3), "SPEED x%.2f", speedMultiplier);
+  std::string line3 = buffer3;
 
   // Scale HUD elements proportionally to screen dimensions (base: 1280x720)
   float scale =
@@ -79,6 +88,8 @@ void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs) {
   // Draw HUD
   DrawText(line1.c_str(), startX, startY, fontSize, paused ? YELLOW : BLUE);
   DrawText(line2.c_str(), startX, startY + lineSpacing, fontSize, line2Color);
+  DrawText(line3.c_str(), startX, startY + 2 * lineSpacing, fontSize,
+           line2Color);
 }
 
 void RaylibRenderer::onGridChanged(const Grid &grid) {

@@ -60,7 +60,7 @@ void GameLoop::Run() {
     m_renderer->beginFrame();
     m_renderer->renderGrid();
     m_renderer->drawStats(m_isPaused, computeTimer.elapsedMilliseconds(),
-                          drawTimer.elapsedMilliseconds());
+                          drawTimer.elapsedMilliseconds(), m_speedMultiplier);
     m_renderer->endFrame();
     drawTimer.stop();
   }
@@ -82,5 +82,14 @@ void GameLoop::handleInput(const InputState &input) {
   }
   if (input.zoom != 0.0f) {
     m_camera->zoom(input.zoom);
+  }
+
+  if (input.increaseSpeed) {
+    if (m_speedMultiplier < 3.0f)
+      m_speedMultiplier += 0.25;
+  }
+  if (input.decreaseSpeed) {
+    if (m_speedMultiplier > 0.0f)
+      m_speedMultiplier -= 0.25;
   }
 }
