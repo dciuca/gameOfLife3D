@@ -10,6 +10,21 @@
 
 #define GLSL_VERSION 330
 
+namespace {
+// Age buckets: newborn (1), young (2-4), mature (5-10), old (11+)
+constexpr float AGE_COLORS[4][3] = {{0.2f, 0.9f, 0.3f},
+                                    {0.2f, 0.6f, 1.0f},
+                                    {1.0f, 0.6f, 0.1f},
+                                    {0.8f, 0.1f, 0.1f}};
+
+size_t ageBucket(uint8_t age) {
+  if (age <= 1) return 0;
+  if (age <= 4) return 1;
+  if (age <= 10) return 2;
+  return 3;
+}
+} // namespace
+
 RaylibRenderer::RaylibRenderer(RaylibCamera &camera) : m_camera(camera) {
   initMesh();
   initBackground();
@@ -43,9 +58,16 @@ void RaylibRenderer::renderGrid() {
                  m_instancingShader.locs[SHADER_LOC_VECTOR_VIEW], cameraPos,
                  SHADER_UNIFORM_VEC3);
 
-  if (!m_transforms.empty()) {
-    DrawMeshInstanced(m_cubeMesh, m_instancedMaterial, m_transforms.data(),
-                      static_cast<int>(m_transforms.size()));
+  for (size_t b = 0; b < AGE_BUCKETS; b++) {
+    const auto &transforms = m_transformsByAge[b];
+    if (transforms.empty()) {
+      continue;
+    }
+    const float c[4] = {AGE_COLORS[b][0], AGE_COLORS[b][1], AGE_COLORS[b][2],
+                        1.0f};
+    SetShaderValue(m_instancingShader, m_cubeColorLoc, c, SHADER_UNIFORM_VEC4);
+    DrawMeshInstanced(m_cubeMesh, m_instancedMaterial, transforms.data(),
+                      static_cast<int>(transforms.size()));
   }
 
   EndMode3D();
@@ -60,7 +82,7 @@ void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs,
   } else {
     char buffer[128];
     snprintf(buffer, sizeof(buffer), "%zu CELLS | compute: %.2f ms",
-             m_transforms.size(), computeMs);
+             m_aliveCount, computeMs);
     line1 = buffer;
   }
 
@@ -115,7 +137,14 @@ void RaylibRenderer::onGridChanged(const Grid &grid) {
 
   // clear() keeps the capacity: memory grows only up to the peak of alive
   // cells and is reused by the next generations
-  m_transforms.clear();
+  for (auto &bucket : m_transformsByAge) {
+    bucket.clear();
+  }
+  m_aliveCount = 0;
+
+  if (m_cellAges.size() != data.size()) {
+    m_cellAges.assign(data.size(), 0);
+  }
 
   std::vector<float> xCoords(logicW);
   std::vector<float> yCoords(logicH);
@@ -141,11 +170,18 @@ void RaylibRenderer::onGridChanged(const Grid &grid) {
         if (data[idx] == 1) {
           float fx = xCoords[x - 1];
 
+          if (m_cellAges[idx] < 255) {
+            m_cellAges[idx]++;
+          }
+
           Matrix transform = MatrixTranslate(fx, fy, fz);
           Matrix scale = MatrixScale(m_cellSize, m_cellSize, m_cellSize);
           Matrix final = MatrixMultiply(scale, transform);
 
-          m_transforms.push_back(final);
+          m_transformsByAge[ageBucket(m_cellAges[idx])].push_back(final);
+          m_aliveCount++;
+        } else {
+          m_cellAges[idx] = 0;
         }
       }
     }
@@ -168,6 +204,8 @@ void RaylibRenderer::initInstancedShader() {
   m_instancedMaterial = LoadMaterialDefault();
   m_instancedMaterial.shader = m_instancingShader;
   m_instancedMaterial.maps[MATERIAL_MAP_DIFFUSE].color = BLUE;
+
+  m_cubeColorLoc = GetShaderLocation(m_instancingShader, "cubeColor");
 
   // Light Position
   int lightLoc = GetShaderLocation(m_instancingShader, "lightPos");
