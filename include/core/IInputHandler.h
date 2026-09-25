@@ -14,6 +14,7 @@ struct InputState {
   float zoom = 0.0f;     // camera zoom amount (0 = no zoom)
   bool increaseSpeed = false;
   bool decreaseSpeed = false;
+  bool reset = false;
 };
 
 class IInputHandler {

@@ -47,5 +47,10 @@ InputState RaylibInputHandler::poll() {
   // --------------------------------------
   input.decreaseSpeed = IsKeyPressed(KEY_DOWN);
 
+  // --------------------------------------
+  // RESET GRID
+  // --------------------------------------
+  input.reset = IsKeyPressed(KEY_R);
+
   return input;
 }

@@ -90,6 +90,12 @@ void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs,
   DrawText(line2.c_str(), startX, startY + lineSpacing, fontSize, line2Color);
   DrawText(line3.c_str(), startX, startY + 2 * lineSpacing, fontSize,
            line2Color);
+
+  // Controls HUD (fixed bottom-left, single line)
+  const char *controls = "UP/DOWN speed | P pause | R reset";
+  int controlsFontSize = static_cast<int>(16 * scale);
+  int controlsY = GetScreenHeight() - startY - controlsFontSize;
+  DrawText(controls, startX, controlsY, controlsFontSize, GRAY);
 }
 
 void RaylibRenderer::onGridChanged(const Grid &grid) {

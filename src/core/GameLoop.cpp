@@ -2,6 +2,7 @@
 
 #include "core/Config.h"
 #include "core/GameRules.h"
+#include "core/PatternLibrary.h"
 #include "utils/Utils.h"
 #include <memory>
 #include <utility>
@@ -91,5 +92,10 @@ void GameLoop::handleInput(const InputState &input) {
   if (input.decreaseSpeed) {
     if (m_speedMultiplier > 0.0f)
       m_speedMultiplier -= 0.25;
+  }
+
+  if (input.reset) {
+    PatternLibrary::initPattern(m_gridPair->current(),
+                                GameConfig::INITIAL_PATTERN);
   }
 }
