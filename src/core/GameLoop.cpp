@@ -60,8 +60,7 @@ void GameLoop::Run() {
     m_renderer->beginFrame();
     m_renderer->renderGrid();
     m_renderer->drawStats(m_isPaused, computeTimer.elapsedMilliseconds(),
-                          drawTimer.elapsedMilliseconds(),
-                          AppConfig::TARGET_FPS);
+                          drawTimer.elapsedMilliseconds());
     m_renderer->endFrame();
     drawTimer.stop();
   }

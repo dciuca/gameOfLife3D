@@ -9,6 +9,7 @@ public:
   ~RaylibWindow() { CloseWindow(); }
 
   void init() override {
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_VSYNC_HINT);
     InitWindow(AppConfig::SCREEN_WIDTH, AppConfig::SCREEN_HEIGHT,
                "Game Of Life");
     SetTargetFPS(AppConfig::TARGET_FPS);

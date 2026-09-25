@@ -15,8 +15,7 @@ public:
   void beginFrame() override;
   void endFrame() override;
   void renderGrid() override;
-  void drawStats(bool paused, double computeMs, double drawMs,
-                 int fps) override;
+  void drawStats(bool paused, double computeMs, double drawMs) override;
   void onGridChanged(const Grid &grid) override;
 
 private:

@@ -30,10 +30,7 @@ void RaylibRenderer::beginFrame() {
                  {0, 0}, 0.0f, WHITE);
 }
 
-void RaylibRenderer::endFrame() {
-  DrawFPS(10, 10);
-  EndDrawing();
-}
+void RaylibRenderer::endFrame() { EndDrawing(); }
 
 void RaylibRenderer::renderGrid() {
   BeginMode3D(m_camera.getCamera());
@@ -53,8 +50,7 @@ void RaylibRenderer::renderGrid() {
   EndMode3D();
 }
 
-void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs,
-                               int fps) {
+void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs) {
   // HUD Line 1 (Compute Stat)
   std::string line1;
   if (paused) {
@@ -65,16 +61,24 @@ void RaylibRenderer::drawStats(bool paused, double computeMs, double drawMs,
   }
 
   // HUD Line 2 (Draw Stat)
-  std::string line2 = "TARGET FPS: " + std::to_string(fps) +
+  int fps = GetFPS();
+  std::string line2 = "FPS: " + std::to_string(fps) +
                       " | draw: " + std::to_string(drawMs) + " ms";
 
   double frameBudgetMs = 1000.0 / fps;
   Color line2Color = (drawMs <= frameBudgetMs) ? GREEN : RED;
 
+  // Scale HUD elements proportionally to screen dimensions (base: 1280x720)
+  float scale =
+      std::min(GetScreenWidth() / 1280.0f, GetScreenHeight() / 720.0f);
+  int fontSize = static_cast<int>(20 * scale);
+  int lineSpacing = static_cast<int>(30 * scale);
+  int startX = static_cast<int>(10 * scale);
+  int startY = static_cast<int>(20 * scale);
+
   // Draw HUD
-  int y = 40;
-  DrawText(line1.c_str(), 10, y, 20, paused ? YELLOW : BLUE);
-  DrawText(line2.c_str(), 10, y + 25, 20, line2Color);
+  DrawText(line1.c_str(), startX, startY, fontSize, paused ? YELLOW : BLUE);
+  DrawText(line2.c_str(), startX, startY + lineSpacing, fontSize, line2Color);
 }
 
 void RaylibRenderer::onGridChanged(const Grid &grid) {

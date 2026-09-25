@@ -10,7 +10,7 @@ struct AppConfig {
 };
 
 struct GameConfig {
-  static constexpr size_t GRID_WIDTH = 500;
+  static constexpr size_t GRID_WIDTH = 800;
   static constexpr size_t GRID_HEIGHT = 4; // 3 = 2D game version
   static constexpr size_t GRID_DEPTH = 500;
 
